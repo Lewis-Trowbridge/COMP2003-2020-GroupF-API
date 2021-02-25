@@ -16,10 +16,38 @@ namespace COMP2003_API.Controllers
     {
         private readonly cleanTableDbContext _context;
 
-        [HttpGet]
+        public VenuesController(cleanTableDbContext context)
+        {
+            _context = context;
+        }
+
+        [HttpGet("search")]
         public ActionResult<List<VenuesSearchResult>> Search(string searchString)
         {
-            throw new NotImplementedException();
+            if (IsPostcode(searchString))
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                List<AppVenueView> venuesSearched = _context.AppVenueView.Where(
+                    venue => venue.VenueName.Contains(searchString) ||
+                    venue.City.Contains(searchString)
+                    ).ToList();
+                List<VenuesSearchResult> results = new List<VenuesSearchResult>();
+                foreach (AppVenueView venueView in venuesSearched)
+                {
+                    VenuesSearchResult newResult = new VenuesSearchResult();
+                    newResult.Id = venueView.VenueId;
+                    newResult.Name = venueView.VenueName;
+                    newResult.City = venueView.City;
+                    newResult.Postcode = venueView.VenuePostcode;
+
+                    results.Add(newResult);
+                }
+
+                return results;
+            }
         }
 
         private bool IsPostcode(string searchString)
