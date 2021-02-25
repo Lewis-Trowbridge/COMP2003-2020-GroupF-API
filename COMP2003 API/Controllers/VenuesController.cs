@@ -49,23 +49,29 @@ namespace COMP2003_API.Controllers
 
                 return results;
             }
+
             else
             {
-                List<AppVenueView> venuesSearched = _context.AppVenueView.Where(
+                // Db lookup where name or city contains search string
+                venuesSearched = _context.AppVenueView.Where(
                     venue => venue.VenueName.Contains(searchString) ||
                     venue.City.Contains(searchString)
                     ).ToList();
-                List<VenuesSearchResult> results = new List<VenuesSearchResult>();
-                foreach (AppVenueView venueView in venuesSearched)
-                {
-                    VenuesSearchResult newResult = new VenuesSearchResult();
-                    newResult.Id = venueView.VenueId;
-                    newResult.Name = venueView.VenueName;
-                    newResult.City = venueView.City;
-                    newResult.Postcode = venueView.VenuePostcode;
+            }
 
-                    results.Add(newResult);
-                }
+            List<VenuesSearchResult> results = new List<VenuesSearchResult>();
+
+            // Extract the data we need from the venue views
+            foreach (AppVenueView venueView in venuesSearched)
+            {
+                VenuesSearchResult newResult = new VenuesSearchResult();
+                newResult.Id = venueView.VenueId;
+                newResult.Name = venueView.VenueName;
+                newResult.City = venueView.City;
+                newResult.Postcode = venueView.VenuePostcode;
+
+                results.Add(newResult);
+            }
 
                 return results;
             }
