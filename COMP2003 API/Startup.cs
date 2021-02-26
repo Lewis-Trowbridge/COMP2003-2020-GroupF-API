@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
+using COMP2003_API.Models;
 
 namespace COMP2003_API
 {
@@ -26,6 +29,12 @@ namespace COMP2003_API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddDbContext<cleanTableDbContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("cleanTableDb"));
+
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
