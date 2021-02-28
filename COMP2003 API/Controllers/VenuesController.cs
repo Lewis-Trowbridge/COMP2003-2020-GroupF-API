@@ -81,22 +81,26 @@ namespace COMP2003_API.Controllers
             Match matchCompare = rx.Match(postcodeInputCompare.ToUpper().Replace(" ", String.Empty));
             int score = 0;
 
-            if (matchUser.Groups["a"].Value == matchCompare.Groups["a"].Value)
+            if (matchCompare.Success)
             {
-                score += 1;
-                if (matchUser.Groups["d"].Value == matchCompare.Groups["d"].Value)
+                if (matchUser.Groups["a"].Value == matchCompare.Groups["a"].Value)
                 {
                     score += 1;
-                    if (matchUser.Groups["s"].Value == matchCompare.Groups["s"].Value)
+                    if (matchUser.Groups["d"].Value == matchCompare.Groups["d"].Value)
                     {
                         score += 1;
-                        if (matchUser.Groups["u"].Value == matchCompare.Groups["u"].Value)
+                        if (matchUser.Groups["s"].Value == matchCompare.Groups["s"].Value)
                         {
-                            score += 1;                            
+                            score += 1;
+                            if (matchUser.Groups["u"].Value == matchCompare.Groups["u"].Value)
+                            {
+                                score += 1;
+                            }
                         }
                     }
                 }
             }
+            
 
             return score;
         }
