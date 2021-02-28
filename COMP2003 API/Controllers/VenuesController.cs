@@ -29,7 +29,7 @@ namespace COMP2003_API.Controllers
             if (IsPostcode(searchString)) 
             {
                 //Loop through, rate postcode, put in list.
-                List<AppVenueView> venuesSearched = _context.AppVenueView.Where(
+                List<AppVenueView> venuesSearched = _context.AppVenueView.AsEnumerable().Where(
                     venue => RatingPostcode(searchString, venue.VenuePostcode) >= 1
                     ).ToList();
                 List<VenuesSearchResult> results = new List<VenuesSearchResult>();
