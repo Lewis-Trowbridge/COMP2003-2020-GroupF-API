@@ -25,29 +25,16 @@ namespace COMP2003_API.Controllers
 
         [HttpGet("search")]
         public ActionResult<List<VenuesSearchResult>> Search(string searchString)
-        {   
+        {
+            List<VenuesSearchResult> results = new List<VenuesSearchResult>();
+            List<AppVenueView> venuesSearched = new List<AppVenueView>();
+
             if (IsPostcode(searchString)) 
             {
                 //Loop through, rate postcode, put in list.
-                List<AppVenueView> venuesSearched = _context.AppVenueView.AsEnumerable().Where(
+                venuesSearched = _context.AppVenueView.AsEnumerable().Where(
                     venue => RatingPostcode(searchString, venue.VenuePostcode) >= 1
                     ).ToList();
-                List<VenuesSearchResult> results = new List<VenuesSearchResult>();
-                foreach (AppVenueView venueView in venuesSearched)
-                {
-                    VenuesSearchResult newResult = new VenuesSearchResult();
-                    newResult.Id = venueView.VenueId;
-                    newResult.Name = venueView.VenueName;
-                    newResult.City = venueView.City;
-                    newResult.Postcode = venueView.VenuePostcode;
-                    //perhaps return a relevance rating? would need to change venueSearchResult -- keep as is for now, could also apply to non-postcode searches
-                    //could either return a relevance rating, or order the list before return.
-
-                    results.Add(newResult);                   
-                }
-
-
-                return results;
             }
 
             else
@@ -58,8 +45,6 @@ namespace COMP2003_API.Controllers
                     venue.City.Contains(searchString)
                     ).ToList();
             }
-
-            List<VenuesSearchResult> results = new List<VenuesSearchResult>();
 
             // Extract the data we need from the venue views
             foreach (AppVenueView venueView in venuesSearched)
@@ -73,12 +58,10 @@ namespace COMP2003_API.Controllers
                 results.Add(newResult);
             }
 
-                return results;
-            }
+            return results;
         }
-        
         private int RatingPostcode(string postcodeInputUser, string postcodeInputCompare)
-        {            
+        {
             //return rating based on the postcode input by the user and in stored restaurants //input postcode compared to in db, proximity rating
             //using ToUpper() and Replace(" ", String.Empty) so Regex can read it
             //postcodes dont always work for proximity - e.g. pl1 1et isnt necessarily closer to pl1 8bz than pl2 1et, ill keep in all of it, but when structuring output, bear it in mind.
@@ -106,15 +89,15 @@ namespace COMP2003_API.Controllers
                     }
                 }
             }
-            
-
             return score;
         }
+
+
         private bool IsPostcode(string searchString)
         {
             Regex rx = new Regex(@"^([A-Z][A-HJ-Y]?\d[A-Zz\d]??\d[A-Z]{2}|GIR ?0A{2})$", RegexOptions.IgnoreCase | RegexOptions.Compiled); //^ $ start, end of text to prevent postcode in a sentence, might be worth changing later?
             Match match = rx.Match(searchString.Replace(" ", String.Empty)); //Replace " " with blank so that regex can read it, might be worth changing the regex later
-            return match.Success
+            return match.Success;
         }
     }
 }
