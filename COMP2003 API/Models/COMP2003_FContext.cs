@@ -51,6 +51,7 @@ namespace COMP2003_API.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.AddLineTwo)
+                    .IsRequired()
                     .HasColumnName("add_line_two")
                     .HasMaxLength(100)
                     .IsUnicode(false);
@@ -76,8 +77,6 @@ namespace COMP2003_API.Models
                     .HasColumnName("county")
                     .HasMaxLength(50)
                     .IsUnicode(false);
-
-                entity.Property(e => e.CustomerId).HasColumnName("customer_id");
 
                 entity.Property(e => e.VenueId).HasColumnName("venue_id");
 
