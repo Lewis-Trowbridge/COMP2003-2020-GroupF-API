@@ -18,7 +18,7 @@ namespace COMP2003_API.Models
             : base(options)
         {
         }
-
+                
         public virtual DbSet<AppVenueView> AppVenueView { get; set; }
         public virtual DbSet<BookingAttendees> BookingAttendees { get; set; }
         public virtual DbSet<Bookings> Bookings { get; set; }

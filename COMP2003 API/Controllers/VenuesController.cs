@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using COMP2003_API.Models;
 using COMP2003_API.Responses;
 using System.Text.RegularExpressions;
+using Microsoft.Data.SqlClient;
 
 
 namespace COMP2003_API.Controllers
@@ -22,6 +23,32 @@ namespace COMP2003_API.Controllers
         {
             _context = context;
         }
+
+        //api/venues/bookTable?venueTableId=2&customerId=3&bookingTime=2008-08-03 15:10:00&bookingSize=1
+        //EXEC book_table @venue_table_id = 2, @customer_id = 3, @booking_time = '2001-12-25 18:10:00', @booking_size = 5
+        [HttpPost("bookTable")]
+        public async Task<ActionResult> BookTable(int venueTableId, int customerId, DateTime bookingTime, int bookingSize)
+        {
+            int sc;                    
+            sc = await CallBookTableSP(venueTableId, customerId, bookingTime, bookingSize);
+
+            return StatusCode(sc);
+        }
+
+        private async Task<int> CallBookTableSP(int venueTableId, int customerId, DateTime bookingTime, int bookingSize)
+        {
+            int rowsAffected = await _context.Database.ExecuteSqlRawAsync("EXEC book_table @venue_table_id = "
+                + venueTableId.ToString() + ", @customer_id = " + customerId.ToString() + ", @booking_time = '" + bookingTime.ToString("yyyy-MM-dd HH:mm:ss") + "', @booking_size = " +
+                bookingSize.ToString());
+
+            if (rowsAffected == 2)
+            {
+                return 200;
+            }
+
+            return 500;
+        }
+
 
         [HttpGet("search")]
         public ActionResult<List<VenuesSearchResult>> Search(string searchString)
