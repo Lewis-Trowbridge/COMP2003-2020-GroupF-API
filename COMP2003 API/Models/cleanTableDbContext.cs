@@ -19,6 +19,7 @@ namespace COMP2003_API.Models
         {
         }
 
+        public virtual DbSet<AppBookingsView> AppBookingsView { get; set; }
         public virtual DbSet<AppVenueView> AppVenueView { get; set; }
         public virtual DbSet<BookingAttendees> BookingAttendees { get; set; }
         public virtual DbSet<Bookings> Bookings { get; set; }
@@ -37,6 +38,61 @@ namespace COMP2003_API.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AppBookingsView>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("app_bookings_view");
+
+                entity.Property(e => e.AddLineOne)
+                    .IsRequired()
+                    .HasColumnName("add_line_one")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.AddLineTwo)
+                    .IsRequired()
+                    .HasColumnName("add_line_two")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.BookingAttended).HasColumnName("booking_attended");
+
+                entity.Property(e => e.BookingId).HasColumnName("booking_id");
+
+                entity.Property(e => e.BookingSize).HasColumnName("booking_size");
+
+                entity.Property(e => e.BookingTime)
+                    .HasColumnName("booking_time")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.City)
+                    .IsRequired()
+                    .HasColumnName("city")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.County)
+                    .IsRequired()
+                    .HasColumnName("county")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VenueId).HasColumnName("venue_id");
+
+                entity.Property(e => e.VenueName)
+                    .IsRequired()
+                    .HasColumnName("venue_name")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.VenuePostcode)
+                    .IsRequired()
+                    .HasColumnName("venue_postcode")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<AppVenueView>(entity =>
             {
                 entity.HasNoKey();
