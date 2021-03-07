@@ -13,6 +13,7 @@ namespace COMP2003_API.Models
         public DateTime BookingTime { get; set; }
         public int BookingSize { get; set; }
         public bool BookingAttended { get; set; }
+        public int CustomerId { get; set; }
         public int VenueId { get; set; }
         public string VenueName { get; set; }
         public string VenuePostcode { get; set; }
