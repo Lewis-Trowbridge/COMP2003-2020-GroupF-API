@@ -11,6 +11,8 @@ servers:
 tags:
 - name: "Venues"
   description: "Venues of the system"
+- name: "Bookings"
+  description: "Bookings of the system"
   
 paths:
   /venues/search/:
@@ -44,3 +46,52 @@ paths:
                       type: string
                     postcode:
                       type: string
+  /bookings/view:
+    get:
+      tags:
+      - Bookings
+      summary: Returns comprehensive information on a booking
+      description: Gets all of the information on a booking designed to be displayed on the view bookings page.
+      parameters:
+        - in: query
+          name: bookingId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Returned when a valid and accessible booking ID is given
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bookingId:
+                    type: integer
+                  bookingTime:
+                    type: string
+                    format: date-time
+                  bookingSize:
+                    type: integer
+                  bookingAttended:
+                    type: boolean
+                  customerId:
+                    type: integer
+                  venueId:
+                    type: integer
+                  venueName:
+                    type: string
+                  venuePostcode:
+                    type: string
+                  addLineOne:
+                    type: string
+                  addLineTwo:
+                    type: string
+                  city:
+                    type: string
+                  county:
+                    type: string
+        "204":
+          description: Returned when an invalid or inaccessible booking ID is given
+          
+      
