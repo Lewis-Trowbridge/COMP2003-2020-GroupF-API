@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -20,6 +20,7 @@ namespace COMP2003_API.Models
         }
 
         public virtual DbSet<AppBookingsView> AppBookingsView { get; set; }
+        
         public virtual DbSet<AppVenueView> AppVenueView { get; set; }
         public virtual DbSet<BookingAttendees> BookingAttendees { get; set; }
         public virtual DbSet<Bookings> Bookings { get; set; }

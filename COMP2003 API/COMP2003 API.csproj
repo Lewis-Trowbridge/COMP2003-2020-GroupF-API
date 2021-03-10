@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.12" />
