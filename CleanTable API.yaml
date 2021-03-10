@@ -1,0 +1,97 @@
+openapi: 3.0.0
+info:
+  title: CleanTable Customer API
+  description: An API intended for use by the mobile API.
+  version: "1.0"
+
+servers:
+  - url: https://comp2003-f-api.azurewebsites.net/api/
+    description: Cloud API hosting
+
+tags:
+- name: "Venues"
+  description: "Venues of the system"
+- name: "Bookings"
+  description: "Bookings of the system"
+  
+paths:
+  /venues/search/:
+    get:
+      tags:
+      - Venues
+      summary: Returns a compressed list of venues
+      description: Gets a compressed list of venues designed to be displayed on a search page - only necessary information for this purpose is given.
+      parameters:
+        - in: query
+          name: searchString
+          required: true
+          schema:
+            type: string
+          description: A venue name, city name, or postcode
+      responses:
+        "200":
+          description: A JSON array of venue information
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    city:
+                      type: string
+                    postcode:
+                      type: string
+  /bookings/view:
+    get:
+      tags:
+      - Bookings
+      summary: Returns comprehensive information on a booking
+      description: Gets all of the information on a booking designed to be displayed on the view bookings page.
+      parameters:
+        - in: query
+          name: bookingId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Returned when a valid and accessible booking ID is given
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bookingId:
+                    type: integer
+                  bookingTime:
+                    type: string
+                    format: date-time
+                  bookingSize:
+                    type: integer
+                  bookingAttended:
+                    type: boolean
+                  customerId:
+                    type: integer
+                  venueId:
+                    type: integer
+                  venueName:
+                    type: string
+                  venuePostcode:
+                    type: string
+                  addLineOne:
+                    type: string
+                  addLineTwo:
+                    type: string
+                  city:
+                    type: string
+                  county:
+                    type: string
+        "204":
+          description: Returned when an invalid or inaccessible booking ID is given
+          
+      
