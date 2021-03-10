@@ -29,24 +29,29 @@ namespace COMP2003_API.Controllers
         [HttpPost("bookTable")]
         public async Task<ActionResult> BookTable(int venueTableId, int customerId, DateTime bookingTime, int bookingSize)
         {
-            int sc;                    
+            StatusCodeResult sc;             
             sc = await CallBookTableSP(venueTableId, customerId, bookingTime, bookingSize);
 
-            return StatusCode(sc);
+            return sc;
         }
 
-        private async Task<int> CallBookTableSP(int venueTableId, int customerId, DateTime bookingTime, int bookingSize)
+        private async Task<StatusCodeResult> CallBookTableSP(int venueTableId, int customerId, DateTime bookingTime, int bookingSize)
         {
-            int rowsAffected = await _context.Database.ExecuteSqlRawAsync("EXEC book_table @venue_table_id = "
-                + venueTableId.ToString() + ", @customer_id = " + customerId.ToString() + ", @booking_time = '" + bookingTime.ToString("yyyy-MM-dd HH:mm:ss") + "', @booking_size = " +
-                bookingSize.ToString());
 
+            SqlParameter[] parameters = new SqlParameter[4];
+            parameters[0] = new SqlParameter("@venue_table_id", venueTableId);
+            parameters[1] = new SqlParameter("@customer_id", customerId);
+            parameters[2] = new SqlParameter("@booking_time", bookingTime.ToString("yyyy-MM-dd HH:mm:ss"));
+            parameters[3] = new SqlParameter("@booking_size", bookingSize);
+
+            int rowsAffected = await _context.Database.ExecuteSqlRawAsync("EXEC book_table @venue_table_id, @customer_id, @booking_time, @booking_size", parameters);
+            
             if (rowsAffected == 2)
             {
-                return 200;
+                return Ok();
             }
 
-            return 500;
+            return BadRequest();
         }
 
 
