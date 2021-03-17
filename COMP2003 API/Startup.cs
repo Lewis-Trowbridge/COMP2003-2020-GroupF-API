@@ -30,7 +30,7 @@ namespace COMP2003_API
         {
             services.AddControllers();
 
-            services.AddDbContext<cleanTableDbContext>(options =>
+            services.AddDbContext<COMP2003_FContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("cleanTableDb"));
 

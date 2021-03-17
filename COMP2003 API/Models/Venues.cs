@@ -12,6 +12,7 @@ namespace COMP2003_API.Models
         public Venues()
         {
             Bookings = new HashSet<Bookings>();
+            VenueTables = new HashSet<VenueTables>();
         }
 
         public int VenueId { get; set; }
@@ -23,5 +24,6 @@ namespace COMP2003_API.Models
         public string County { get; set; }
 
         public virtual ICollection<Bookings> Bookings { get; set; }
+        public virtual ICollection<VenueTables> VenueTables { get; set; }
     }
 }

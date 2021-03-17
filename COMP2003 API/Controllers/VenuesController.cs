@@ -17,9 +17,9 @@ namespace COMP2003_API.Controllers
     [ApiController]
     public class VenuesController : ControllerBase
     {
-        private readonly cleanTableDbContext _context;
+        private readonly COMP2003_FContext _context;
 
-        public VenuesController(cleanTableDbContext context)
+        public VenuesController(COMP2003_FContext context)
         {
             _context = context;
         }
