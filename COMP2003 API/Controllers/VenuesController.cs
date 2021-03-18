@@ -35,12 +35,13 @@ namespace COMP2003_API.Controllers
 
             CreationResult result = new CreationResult();
 
+            result.Message = "Booking unsuccessful";
             result.Success = false;
             if (sc[1] == 201)
             {
                 result.Success = true;
                 result.Id = sc[0];
-                result.Message = "";
+                result.Message = "Booking created";
                 return Ok(result);
             }
 
