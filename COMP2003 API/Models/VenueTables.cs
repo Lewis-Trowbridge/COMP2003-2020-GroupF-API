@@ -19,6 +19,7 @@ namespace COMP2003_API.Models
         public int VenueTableNum { get; set; }
         public int VenueTableCapacity { get; set; }
 
+        public virtual Venues Venue { get; set; }
         public virtual ICollection<Bookings> Bookings { get; set; }
     }
 }

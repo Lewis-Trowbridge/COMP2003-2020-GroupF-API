@@ -13,9 +13,9 @@ namespace COMP2003_API.Controllers
     [ApiController]
     public class BookingsController : ControllerBase
     {
-        private readonly cleanTableDbContext _context;
+        private readonly COMP2003_FContext _context;
 
-        public BookingsController(cleanTableDbContext context)
+        public BookingsController(COMP2003_FContext context)
         {
             _context = context;
         }

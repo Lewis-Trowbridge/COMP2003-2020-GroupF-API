@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -8,19 +8,18 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace COMP2003_API.Models
 {
-    public partial class cleanTableDbContext : DbContext
+    public partial class COMP2003_FContext : DbContext
     {
-        public cleanTableDbContext()
+        public COMP2003_FContext()
         {
         }
 
-        public cleanTableDbContext(DbContextOptions<cleanTableDbContext> options)
+        public COMP2003_FContext(DbContextOptions<COMP2003_FContext> options)
             : base(options)
         {
         }
 
         public virtual DbSet<AppBookingsView> AppBookingsView { get; set; }
-        
         public virtual DbSet<AppVenueView> AppVenueView { get; set; }
         public virtual DbSet<BookingAttendees> BookingAttendees { get; set; }
         public virtual DbSet<Bookings> Bookings { get; set; }
@@ -33,7 +32,7 @@ namespace COMP2003_API.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=cleanTableDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+                optionsBuilder.UseSqlServer("Data Source=socem1.uopnet.plymouth.ac.uk;Initial Catalog=COMP2003_F;Persist Security Info=True;User ID=COMP2003_F;Password=CncJ279*");
             }
         }
 
@@ -52,7 +51,6 @@ namespace COMP2003_API.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.AddLineTwo)
-                    .IsRequired()
                     .HasColumnName("add_line_two")
                     .HasMaxLength(100)
                     .IsUnicode(false);
@@ -109,7 +107,6 @@ namespace COMP2003_API.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.AddLineTwo)
-                    .IsRequired()
                     .HasColumnName("add_line_two")
                     .HasMaxLength(100)
                     .IsUnicode(false);
@@ -145,34 +142,31 @@ namespace COMP2003_API.Models
 
             modelBuilder.Entity<BookingAttendees>(entity =>
             {
-                entity.HasKey(e => new { e.BookingId, e.CustomerId })
-                    .HasName("PK__booking___1135F909E38196DE");
+                entity.HasNoKey();
 
                 entity.ToTable("booking_attendees");
+
+                entity.Property(e => e.BookingAttended).HasColumnName("booking_attended");
 
                 entity.Property(e => e.BookingId).HasColumnName("booking_id");
 
                 entity.Property(e => e.CustomerId).HasColumnName("customer_id");
 
-                entity.Property(e => e.BookingAttended).HasColumnName("booking_attended");
-
                 entity.HasOne(d => d.Booking)
-                    .WithMany(p => p.BookingAttendees)
+                    .WithMany()
                     .HasForeignKey(d => d.BookingId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__booking_a__booki__4E53A1AA");
+                    .HasConstraintName("FK__booking_a__booki__36B12243");
 
                 entity.HasOne(d => d.Customer)
-                    .WithMany(p => p.BookingAttendees)
+                    .WithMany()
                     .HasForeignKey(d => d.CustomerId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__booking_a__custo__4F47C5E3");
+                    .HasConstraintName("FK__booking_a__custo__37A5467C");
             });
 
             modelBuilder.Entity<Bookings>(entity =>
             {
                 entity.HasKey(e => e.BookingId)
-                    .HasName("PK__bookings__5DE3A5B10A626279");
+                    .HasName("PK__bookings__5DE3A5B18784C5FA");
 
                 entity.ToTable("bookings");
 
@@ -192,29 +186,33 @@ namespace COMP2003_API.Models
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.VenueId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__bookings__venue___2A164134");
+                    .HasConstraintName("FK__bookings__venue___32E0915F");
 
                 entity.HasOne(d => d.VenueTable)
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.VenueTableId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__bookings__venue___2EDAF651");
+                    .HasConstraintName("FK__bookings__venue___33D4B598");
             });
 
             modelBuilder.Entity<Customers>(entity =>
             {
                 entity.HasKey(e => e.CustomerId)
-                    .HasName("PK__customer__CD65CB8511777C82");
+                    .HasName("PK__customer__CD65CB85A162A00C");
 
                 entity.ToTable("customers");
 
                 entity.HasIndex(e => e.CustomerUsername)
-                    .HasName("UQ__customer__64E4CB014C3FBEC7")
+                    .HasName("UQ__customer__64E4CB01F95F2078")
                     .IsUnique();
 
                 entity.Property(e => e.CustomerId).HasColumnName("customer_id");
 
-                entity.Property(e => e.CustomerContactNumber).HasColumnName("customer_contact_number");
+                entity.Property(e => e.CustomerContactNumber)
+                    .IsRequired()
+                    .HasColumnName("customer_contact_number")
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.CustomerName)
                     .IsRequired()
@@ -237,7 +235,8 @@ namespace COMP2003_API.Models
 
             modelBuilder.Entity<VenueTables>(entity =>
             {
-                entity.HasKey(e => e.VenueTableId);
+                entity.HasKey(e => e.VenueTableId)
+                    .HasName("PK__venue_ta__5B02BE9094DDA9C7");
 
                 entity.ToTable("venue_tables");
 
@@ -248,12 +247,18 @@ namespace COMP2003_API.Models
                 entity.Property(e => e.VenueTableCapacity).HasColumnName("venue_table_capacity");
 
                 entity.Property(e => e.VenueTableNum).HasColumnName("venue_table_num");
+
+                entity.HasOne(d => d.Venue)
+                    .WithMany(p => p.VenueTables)
+                    .HasForeignKey(d => d.VenueId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__venue_tab__venue__300424B4");
             });
 
             modelBuilder.Entity<Venues>(entity =>
             {
                 entity.HasKey(e => e.VenueId)
-                    .HasName("PK__venues__82A8BE8D9F10979F");
+                    .HasName("PK__venues__82A8BE8DDDC86568");
 
                 entity.ToTable("venues");
 
@@ -266,7 +271,6 @@ namespace COMP2003_API.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.AddLineTwo)
-                    .IsRequired()
                     .HasColumnName("add_line_two")
                     .HasMaxLength(100)
                     .IsUnicode(false);
