@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: CleanTable Customer API
-  description: An API intended for use by the mobile API.
+  description: An API intended for use by the mobile application.
   version: "1.0"
 
 servers:
@@ -13,6 +13,8 @@ tags:
   description: "Venues of the system"
 - name: "Bookings"
   description: "Bookings of the system"
+- name: "Customers" 
+  description: "Customer accounts in the system"
   
 paths:
   /venues/search/:
@@ -93,5 +95,61 @@ paths:
                     type: string
         "204":
           description: Returned when an invalid or inaccessible booking ID is given
+  /customers/create:
+    post:
+      tags:
+      - Customers
+      summary: Creates a new customer account
+      description: Creates a new customer account based on the information given. Usernames will be unique - if they are not, a specific HTTP status code will be used. Passwords are hashed using BCrypt, as recommended by OWASP.
+      requestBody:
+        description: The information of the new account.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerName:
+                  type: string
+                customerContactNumber:
+                  type: string
+                customerUsername:
+                  type: string
+                customerPassword:
+                  type: string
+      responses:
+        "200":
+          description: A user account is created using the information given. Message is "Customer account created."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreationResult"
+        "208":
+          description: A user with this username already exists. Message is "An account with that username already exists."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreationResult"
+        "500":
+          description: Another error has occured. Message is "An unspecified server error has occured."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreationResult"
+        
+          
+components:
+  schemas:
+    CreationResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        id:
+          type: integer
+        message:
+          type: string
+          
+          
           
       
