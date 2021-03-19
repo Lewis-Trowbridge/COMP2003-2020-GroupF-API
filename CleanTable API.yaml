@@ -5,8 +5,8 @@ info:
   version: "1.0"
 
 servers:
-  - url: https://comp2003-f-api.azurewebsites.net/api/
-    description: Cloud API hosting
+  - url: http://web.socem.plymouth.ac.uk/COMP2003/COMP2003_F/api/api
+    description: University API hosting
 
 tags:
 - name: "Venues"
