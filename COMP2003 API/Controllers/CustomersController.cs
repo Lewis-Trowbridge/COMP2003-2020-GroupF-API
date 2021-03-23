@@ -27,6 +27,13 @@ namespace COMP2003_API.Controllers
         public async Task<ActionResult<CreationResult>> Create(Customers customer)
         {
             CreationResult result = new CreationResult();
+            if (!ModelState.IsValid)
+            {
+                result.Success = false;
+                result.Message = "A validation error occured.";
+                return BadRequest(result);
+            }
+
             // Hash password using BCrypt using OWASP's recommended work factor of 12
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(customer.CustomerPassword, workFactor: 12);
             string response = await CallAddCustomerSP(customer.CustomerName, customer.CustomerContactNumber, customer.CustomerUsername, hashedPassword);
