@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using COMP2003_API.Models;
+using COMP2003_API.Requests;
 using COMP2003_API.Responses;
 using System.Text.RegularExpressions;
 using Microsoft.Data.SqlClient;
@@ -27,8 +28,14 @@ namespace COMP2003_API.Controllers
         //api/venues/bookTable?venueTableId=2&customerId=3&bookingTime=2008-08-03 15:10:00&bookingSize=1
         //EXEC book_table @venue_table_id = 2, @customer_id = 3, @booking_time = '2001-12-25 18:10:00', @booking_size = 5
         [HttpPost("bookTable")]
-        public async Task<ActionResult<CreationResult>> BookTable(int venueTableId, int customerId, DateTime bookingTime, int bookingSize)
-        {            
+        public async Task<ActionResult<CreationResult>> BookTable(CreateBooking createBooking)
+        {
+            int venueTableId = createBooking.VenueTableId;
+            // Replace with retrieval of customer ID from HttpContext when authentication is implemented
+            int customerId = createBooking.CustomerId;
+            DateTime bookingTime = createBooking.BookingDateTime;
+            int bookingSize = createBooking.BookingSize;
+
             int[] sc;             
             sc = 
                 await CallBookTableSP(venueTableId, customerId, bookingTime, bookingSize);
