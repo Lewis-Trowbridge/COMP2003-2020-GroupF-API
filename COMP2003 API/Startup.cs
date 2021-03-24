@@ -12,7 +12,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.SqlServer;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using COMP2003_API.Models;
 
 namespace COMP2003_API
