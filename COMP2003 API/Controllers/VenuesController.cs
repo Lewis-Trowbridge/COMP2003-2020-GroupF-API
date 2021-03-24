@@ -78,6 +78,16 @@ namespace COMP2003_API.Controllers
             return output;
         }
 
+        [HttpGet("top")]
+        public async Task<ActionResult<List<AppVenueView>>> ViewTop()
+        {
+            int numberToReturn = 30;
+            List<AppVenueView> topViews = await _context.AppVenueView
+                .Take(numberToReturn)
+                .ToListAsync();
+            return Ok(topViews);
+        }
+
 
         [HttpGet("search")]
         public ActionResult<List<VenuesSearchResult>> Search(string searchString)
