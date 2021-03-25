@@ -17,6 +17,24 @@ tags:
   description: "Customer accounts in the system"
   
 paths:
+
+  /venues/top:
+    get:
+      tags:
+      - Venues
+      summary: Gets top venues
+      description: Returns a list of the 30 top venues, intended to be displayed on a home page
+      responses:
+        "200":
+          description: The top 30 venues.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AppVenueView"
+    
+
   /venues/search/:
     get:
       tags:
@@ -195,7 +213,23 @@ components:
           type: integer
         message:
           type: string
-          
+    AppVenueView:
+      type: object
+      properties:
+        venueId:
+          type: integer
+        venuePostcode:
+          type: string
+        addLineOne:
+          type: string
+        addLineTwo:
+          type: string
+        city:
+          type: string
+        county:
+          type: string
+        totalCapacity:
+          type: integer
           
           
       
