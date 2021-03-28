@@ -200,6 +200,41 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreationResult"
+                
+  /customers/delete:
+    delete:
+      tags:
+      - Customers
+      summary: Deletes a customer account
+      description: Deletes a customer account based on the ID given.
+      parameters:
+      - in: query
+        name: customerId
+        required: true
+        schema:
+          type: integer
+        description: The ID of the customer account to be deleted.
+      
+        
+      responses:
+        "200":
+          description: The customer account has been successfully deleted. Message is "This account has been deleted."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletionResult"
+        "404":
+          description: The customer account could not be found. Message is "Deletion failed - account does not exist."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletionResult"
+        "500":
+          description: Another error has occurred. Message is "An unspecifed server error has occured."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletionResult"
         
           
 components:
@@ -213,6 +248,15 @@ components:
           type: integer
         message:
           type: string
+    
+    DeletionResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+    
     AppVenueView:
       type: object
       properties:
