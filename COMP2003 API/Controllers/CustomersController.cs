@@ -61,9 +61,8 @@ namespace COMP2003_API.Controllers
         }
 
         [HttpDelete("delete")]
-        public async Task<ActionResult<DeletionResult>> Delete(DeletionRequest deletionRequest)
+        public async Task<ActionResult<DeletionResult>> Delete(int customerId)
         {
-            int customerId = deletionRequest.Id;
             DeletionResult result = new DeletionResult();
             string response = await CallDeleteCustomerSP(customerId);
 

@@ -37,13 +37,8 @@ namespace COMP2003_API.Tests.Controllers
             await dbContext.Customers.AddAsync(testCustomer);
             await dbContext.SaveChangesAsync();
 
-            var deletionRequest = new DeletionRequest
-            {
-                Id = testCustomer.CustomerId
-            };
-
             // Act
-            var actionResult = await controller.Delete(deletionRequest);
+            var actionResult = await controller.Delete(testCustomer.CustomerId);
             var okObjectResult = actionResult.Result as OkObjectResult;
             var realDeletionResult = (DeletionResult)okObjectResult.Value;
 
@@ -65,13 +60,8 @@ namespace COMP2003_API.Tests.Controllers
             await dbContext.Customers.AddAsync(testCustomer);
             await dbContext.SaveChangesAsync();
 
-            var deletionRequest = new DeletionRequest
-            {
-                Id = testCustomer.CustomerId + 1
-            };
-
             // Act
-            var actionResult = await controller.Delete(deletionRequest);
+            var actionResult = await controller.Delete(testCustomer.CustomerId + 1);
             var notFoundObjectResult = actionResult.Result as NotFoundObjectResult;
             var realDeletionResult = (DeletionResult)notFoundObjectResult.Value;
 
