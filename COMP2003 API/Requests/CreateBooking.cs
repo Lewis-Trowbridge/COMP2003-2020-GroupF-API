@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace COMP2003_API.Requests
 {
     public class CreateBooking
     {
-        [Required]
+        [JsonRequired]
         public int VenueTableId { get; set; }
-        [Required]
+        [JsonRequired]
         public int CustomerId { get; set; }
-        [Required]
+        [JsonRequired]
         public DateTime BookingDateTime { get; set; }
-        [Required]
+        [JsonRequired]
         public int BookingSize { get; set; }
     }
 }

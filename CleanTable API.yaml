@@ -17,6 +17,24 @@ tags:
   description: "Customer accounts in the system"
   
 paths:
+
+  /venues/top:
+    get:
+      tags:
+      - Venues
+      summary: Gets top venues
+      description: Returns a list of the 30 top venues, intended to be displayed on a home page
+      responses:
+        "200":
+          description: The top 30 venues.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AppVenueView"
+    
+
   /venues/search/:
     get:
       tags:
@@ -182,6 +200,41 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreationResult"
+                
+  /customers/delete:
+    delete:
+      tags:
+      - Customers
+      summary: Deletes a customer account
+      description: Deletes a customer account based on the ID given.
+      parameters:
+      - in: query
+        name: customerId
+        required: true
+        schema:
+          type: integer
+        description: The ID of the customer account to be deleted.
+      
+        
+      responses:
+        "200":
+          description: The customer account has been successfully deleted. Message is "This account has been deleted."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletionResult"
+        "404":
+          description: The customer account could not be found. Message is "Deletion failed - account does not exist."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletionResult"
+        "500":
+          description: Another error has occurred. Message is "An unspecifed server error has occured."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletionResult"
         
           
 components:
@@ -195,7 +248,32 @@ components:
           type: integer
         message:
           type: string
-          
+    
+    DeletionResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+    
+    AppVenueView:
+      type: object
+      properties:
+        venueId:
+          type: integer
+        venuePostcode:
+          type: string
+        addLineOne:
+          type: string
+        addLineTwo:
+          type: string
+        city:
+          type: string
+        county:
+          type: string
+        totalCapacity:
+          type: integer
           
           
       

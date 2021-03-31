@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using COMP2003_API.Models;
+using COMP2003_API.Requests;
 using COMP2003_API.Responses;
 using BCrypt;
 
@@ -59,6 +60,31 @@ namespace COMP2003_API.Controllers
 
         }
 
+        [HttpDelete("delete")]
+        public async Task<ActionResult<DeletionResult>> Delete(int customerId)
+        {
+            DeletionResult result = new DeletionResult();
+            string response = await CallDeleteCustomerSP(customerId);
+
+            switch (response)
+            {
+                case "200":
+                    result.Success = true;
+                    result.Message = "This account has been deleted.";
+                    return Ok(result);
+
+                case "404":
+                    result.Success = false;
+                    result.Message = "Deletion failed - account does not exist.";
+                    return NotFound(result);
+
+                default:
+                    result.Success = false;
+                    result.Message = "An unspecifed server error has occured.";
+                    return StatusCode(500, result);
+            }
+        }
+
         private async Task<string> CallAddCustomerSP(string customerName, string customerContactNumber, string customerUsername, string hashedPassword)
         {
             SqlParameter[] parameters = new SqlParameter[5];
@@ -76,6 +102,22 @@ namespace COMP2003_API.Controllers
             await _context.Database.ExecuteSqlRawAsync("EXEC add_customer @customer_name, @customer_contact_number, @customer_username, @customer_password, @response OUTPUT", parameters);
 
             return (string)parameters[4].Value;
+        }
+
+        private async Task<string> CallDeleteCustomerSP(int customerId)
+        {
+            SqlParameter[] parameters = new SqlParameter[2];
+            parameters[0] = new SqlParameter("@customer_id", customerId);
+            parameters[1] = new SqlParameter
+            {
+                ParameterName = "@response",
+                Direction = System.Data.ParameterDirection.Output,
+                Size = 100
+            };
+
+            await _context.Database.ExecuteSqlRawAsync("EXEC delete_customer @customer_id, @response OUTPUT", parameters);
+
+            return (string)parameters[1].Value;
         }
 
     }
