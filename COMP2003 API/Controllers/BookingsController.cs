@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using COMP2003_API.Models;
+using COMP2003_API.Responses;
 
 namespace COMP2003_API.Controllers
 {
@@ -45,6 +46,12 @@ namespace COMP2003_API.Controllers
                 // when no booking is found
                 return NoContent();
             }
+        }
+
+        [HttpDelete("delete")]
+        public async Task<ActionResult<DeletionResult>> Delete(int bookingId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
