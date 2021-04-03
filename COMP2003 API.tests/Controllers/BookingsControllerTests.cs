@@ -60,7 +60,11 @@ namespace COMP2003_API.Tests.Controllers
             Assert.Equal(expectedDeletionResult, realDeletionResult);
 
             // Cleanup
-            dbContext.RemoveRange(new { testBooking.Venue, testBooking.VenueTable, testAttendee.Customer, testAttendee, testBooking });
+            dbContext.Remove(testBooking);
+            dbContext.Remove(testBooking.VenueTable);
+            dbContext.Remove(testBooking.Venue);
+            dbContext.Remove(testAttendee);
+            dbContext.Remove(testAttendee.Customer);
             await dbContext.SaveChangesAsync();
         }
     }
