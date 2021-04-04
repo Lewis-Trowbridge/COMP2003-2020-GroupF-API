@@ -122,6 +122,11 @@ paths:
           required: true
           schema:
             type: integer
+        - in: query
+          name: customerId
+          required: true
+          schema:
+            type: integer
       responses:
         "200":
           description: Returned when a valid and accessible booking ID is given
