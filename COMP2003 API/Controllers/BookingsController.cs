@@ -22,7 +22,7 @@ namespace COMP2003_API.Controllers
 
         [HttpGet("view")]
         public async Task<ActionResult<AppBookingsView>> View(int bookingId)
-        {
+        {            
             // This is where the access of the customer ID would go
             // which would likely use HttpContext to obtain the customer ID - it is hardcoded for now
             int customerId = 1;

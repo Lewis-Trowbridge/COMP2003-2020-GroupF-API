@@ -25,6 +25,51 @@ namespace COMP2003_API.Controllers
             _context = context;
         }
 
+        [HttpGet("tablesAvailable")]
+        public async Task<ActionResult<List<VenueTablesAvailableResult>>> TablesAvailable(int venueId, int partySize, DateTime bookingTime)
+        {
+            List<VenueTablesAvailableResult> returnResults = new List<VenueTablesAvailableResult>();
+
+            List<VenueTables> allPossibleTables = new List<VenueTables>();
+            List<Bookings> allCurrentBookings = new List<Bookings>();
+
+            allPossibleTables = _context.VenueTables.AsEnumerable().Where(
+            venueTable => (venueTable.VenueId == venueId && partySize <= venueTable.VenueTableCapacity)
+            ).ToList();
+
+            allCurrentBookings = _context.Bookings.AsEnumerable().Where(
+            bookingTables => bookingTables.VenueId == venueId
+            ).ToList();
+
+            foreach (VenueTables venueTableView in allPossibleTables)
+            {
+                VenueTablesAvailableResult newResult = new VenueTablesAvailableResult();
+                newResult.TableId = venueTableView.VenueTableId;
+                newResult.NumberOfSeats = venueTableView.VenueTableCapacity;
+                newResult.VenueTableNumber = venueTableView.VenueTableNum;
+
+                bool valid = true;
+                foreach (Bookings bookingView in allCurrentBookings)
+                {
+                    if ((bookingView.BookingTime.AddHours(2) > bookingTime && bookingView.BookingTime.AddHours(-2) < bookingTime))
+                    {
+                        valid = false;
+                    }
+
+                }
+
+                if (valid)
+                {
+                    returnResults.Add(newResult);
+                }
+                
+                
+            }
+
+            return returnResults;
+        }
+
+
         //api/venues/bookTable?venueTableId=2&customerId=3&bookingTime=2008-08-03 15:10:00&bookingSize=1
         //EXEC book_table @venue_table_id = 2, @customer_id = 3, @booking_time = '2001-12-25 18:10:00', @booking_size = 5
         [HttpPost("bookTable")]
