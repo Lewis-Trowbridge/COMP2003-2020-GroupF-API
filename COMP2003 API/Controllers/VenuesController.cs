@@ -146,10 +146,25 @@ namespace COMP2003_API.Controllers
 
             if (IsPostcode(searchString)) 
             {
-                //Loop through, rate postcode, put in list.
-                venuesSearched = _context.AppVenueView.AsEnumerable().Where(
-                    venue => RatingPostcode(searchString, venue.VenuePostcode) >= 1
-                    ).ToList();
+                //Loop through, rate postcode, put in list.   
+
+                venuesSearched.AddRange(_context.AppVenueView.AsEnumerable().Where(
+                    venue => RatingPostcode(searchString, venue.VenuePostcode) == 4
+                    ).ToList());
+
+                venuesSearched.AddRange(_context.AppVenueView.AsEnumerable().Where(
+                    venue => RatingPostcode(searchString, venue.VenuePostcode) == 3
+                    ).ToList());
+
+                venuesSearched.AddRange(_context.AppVenueView.AsEnumerable().Where(
+                    venue => RatingPostcode(searchString, venue.VenuePostcode) == 2
+                    ).ToList());
+
+                venuesSearched.AddRange(_context.AppVenueView.AsEnumerable().Where(
+                    venue => RatingPostcode(searchString, venue.VenuePostcode) == 1
+                    ).ToList());
+
+
             }
 
             else
@@ -159,6 +174,8 @@ namespace COMP2003_API.Controllers
                     venue => venue.VenueName.Contains(searchString) ||
                     venue.City.Contains(searchString)
                     ).ToList();
+
+                System.Diagnostics.Debug.WriteLine("****  ****  ****" + RatingLevenshteinDistance(searchString, "Plymouth").ToString());
             }
 
             // Extract the data we need from the venue views
@@ -174,6 +191,57 @@ namespace COMP2003_API.Controllers
             }
 
             return results;
+        }
+
+        private int RatingLevenshteinDistance(string inputWord, string compareAgainst)
+        {            
+
+            if (String.IsNullOrEmpty(inputWord) && String.IsNullOrEmpty(compareAgainst))
+            {
+                return 0;
+            }
+            if (String.IsNullOrEmpty(inputWord))
+            {
+                return 0;
+            }
+            if (String.IsNullOrEmpty(compareAgainst))
+            {
+                return 0;
+            }
+
+            inputWord = inputWord.ToUpper();
+            compareAgainst = compareAgainst.ToUpper();
+
+            int lengthInput = inputWord.Length;
+            int lengthCompare = compareAgainst.Length;
+
+            int[,] distance = new int[lengthInput + 1, lengthCompare + 1];
+
+            for (int i = 0; i <= lengthInput; distance[i, 0] = i++) ;
+            for (int j = 0; j <= lengthCompare; distance[0, j] = j++) ;
+
+            for (int i = 1; i <= lengthInput; i++)
+                for (int j = 1; j <= lengthCompare; j++)
+                {
+                    int cost = compareAgainst[j - 1] == inputWord[i - 1] ? 0 : 1;
+                    distance[i, j] = Math.Min
+                        (
+                        Math.Min(distance[i - 1, j] + 1, distance[i, j - 1] + 1),
+                        distance[i - 1, j - 1] + cost
+                        );
+                }
+
+            int editDifference = distance[lengthInput, lengthCompare];
+
+            int longestWord = lengthInput;
+            if (lengthCompare > longestWord)
+            {
+                longestWord = lengthCompare;
+            }
+
+            double percentageDifference = (100/Convert.ToDouble(longestWord)) * (longestWord - editDifference);
+
+            return (Convert.ToInt32(percentageDifference));
         }
         private int RatingPostcode(string postcodeInputUser, string postcodeInputCompare)
         {
@@ -210,9 +278,14 @@ namespace COMP2003_API.Controllers
 
         private bool IsPostcode(string searchString)
         {
-            Regex rx = new Regex(@"^([A-Z][A-HJ-Y]?\d[A-Zz\d]??\d[A-Z]{2}|GIR ?0A{2})$", RegexOptions.IgnoreCase | RegexOptions.Compiled); //^ $ start, end of text to prevent postcode in a sentence, might be worth changing later?
-            Match match = rx.Match(searchString.Replace(" ", String.Empty)); //Replace " " with blank so that regex can read it, might be worth changing the regex later
-            return match.Success;
+            if(searchString != null)
+            {           
+                Regex rx = new Regex(@"^([A-Z][A-HJ-Y]?\d[A-Zz\d]??\d[A-Z]{2}|GIR ?0A{2})$", RegexOptions.IgnoreCase | RegexOptions.Compiled); //^ $ start, end of text to prevent postcode in a sentence, might be worth changing later?
+                Match match = rx.Match(searchString.Replace(" ", String.Empty)); //Replace " " with blank so that regex can read it, might be worth changing the regex later
+                return match.Success;
+
+            }
+            else { return false; }
         }
     }
 }
