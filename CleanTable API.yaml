@@ -163,6 +163,40 @@ paths:
         "204":
           description: Returned when an invalid or inaccessible booking ID is given
           
+  /bookings/delete:
+    delete:
+      tags:
+      - Bookings
+      summary: Deletes a booking
+      description: Delets a booking based on the ID given.
+      parameters:
+      - in: query
+        name: bookingId
+        required: true
+        schema:
+          type: integer
+    
+      responses:
+        "200":
+          description: The booking has been successfully deleted. Message is "This booking has been deleted."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletionResult"
+        "404":
+          description: The customer account could not be found. Message is "Deletion failed - booking does not exist."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletionResult"
+        "500":
+          description: Another error has occurred. Message is "An unspecifed server error has occured."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletionResult"
+    
+          
           
   /customers/create:
     post:
