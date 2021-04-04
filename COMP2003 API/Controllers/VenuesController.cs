@@ -25,6 +25,7 @@ namespace COMP2003_API.Controllers
             _context = context;
         }
 
+        //api/venues/tablesAvailable?venueId=1&partySize=4&bookingTime=2001-12-25 18:10:00
         [HttpGet("tablesAvailable")]
         public async Task<ActionResult<List<VenueTablesAvailableResult>>> TablesAvailable(int venueId, int partySize, DateTime bookingTime)
         {
@@ -51,10 +52,13 @@ namespace COMP2003_API.Controllers
                 bool valid = true;
                 foreach (Bookings bookingView in allCurrentBookings)
                 {
-                    if ((bookingView.BookingTime.AddHours(2) > bookingTime && bookingView.BookingTime.AddHours(-2) < bookingTime))
+                    if (bookingView.VenueTableId == venueTableView.VenueTableId)
                     {
-                        valid = false;
-                    }
+                        if ((bookingView.BookingTime.AddHours(2) > bookingTime && bookingView.BookingTime.AddHours(-2) < bookingTime))
+                        {
+                            valid = false;
+                        }
+                    }                    
 
                 }
 
