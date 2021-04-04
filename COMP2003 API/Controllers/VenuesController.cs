@@ -170,12 +170,15 @@ namespace COMP2003_API.Controllers
             else
             {
                 // Db lookup where name or city contains search string
-                venuesSearched = _context.AppVenueView.Where(
-                    venue => venue.VenueName.Contains(searchString) ||
-                    venue.City.Contains(searchString)
-                    ).ToList();
 
-                System.Diagnostics.Debug.WriteLine("****  ****  ****" + RatingLevenshteinDistance(searchString, "Plymouth").ToString());
+                for (int i = 100; i>= 20; i--)
+                {
+                    venuesSearched.AddRange(_context.AppVenueView.AsEnumerable().Where(
+                    venue => RatingLevenshteinDistance(searchString, venue.City) == i ^
+                    RatingLevenshteinDistance(searchString, venue.VenueName) == i
+                    ).ToList());
+                }
+
             }
 
             // Extract the data we need from the venue views
