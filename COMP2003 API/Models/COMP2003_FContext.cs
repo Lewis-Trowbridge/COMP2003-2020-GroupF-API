@@ -92,6 +92,12 @@ namespace COMP2003_API.Models
                     .HasColumnName("venue_postcode")
                     .HasMaxLength(10)
                     .IsUnicode(false);
+
+                entity.Property(e => e.VenueTableCapacity).HasColumnName("venue_table_capacity");
+
+                entity.Property(e => e.VenueTableId).HasColumnName("venue_table_id");
+
+                entity.Property(e => e.VenueTableNum).HasColumnName("venue_table_num");
             });
 
             modelBuilder.Entity<AppVenueView>(entity =>
