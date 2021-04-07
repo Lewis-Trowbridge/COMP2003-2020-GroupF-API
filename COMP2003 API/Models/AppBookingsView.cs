@@ -17,6 +17,9 @@ namespace COMP2003_API.Models
         public int VenueId { get; set; }
         public string VenueName { get; set; }
         public string VenuePostcode { get; set; }
+        public int VenueTableId { get; set; }
+        public int VenueTableNum { get; set; }
+        public int VenueTableCapacity { get; set; }
         public string AddLineOne { get; set; }
         public string AddLineTwo { get; set; }
         public string City { get; set; }

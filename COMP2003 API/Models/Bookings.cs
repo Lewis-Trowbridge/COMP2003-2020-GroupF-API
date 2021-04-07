@@ -9,6 +9,11 @@ namespace COMP2003_API.Models
 {
     public partial class Bookings
     {
+        public Bookings()
+        {
+            BookingAttendees = new HashSet<BookingAttendees>();
+        }
+
         public int BookingId { get; set; }
         public DateTime BookingTime { get; set; }
         public int BookingSize { get; set; }
@@ -17,5 +22,6 @@ namespace COMP2003_API.Models
 
         public virtual Venues Venue { get; set; }
         public virtual VenueTables VenueTable { get; set; }
+        public virtual ICollection<BookingAttendees> BookingAttendees { get; set; }
     }
 }
