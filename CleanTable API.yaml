@@ -18,6 +18,53 @@ tags:
   
 paths:
 
+  /venues/tablesAvailable:
+    get:
+      tags:
+      - Venues
+      summary: Gets the available tables at a time given
+      description: Returns a list of all the available tables at a venue at a certain time given.
+      parameters:
+        - in: query
+          name: venueId
+          required: true
+          schema:
+            type: integer
+          description: the venue you're searching for
+        
+        - in: query
+          name: partySize
+          required: true
+          schema:
+            type: integer
+          description: the size of the party you want to book a table for
+         
+        - in: query 
+          name: bookingTime
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: the time and date you want to check for tables
+          
+      responses:
+        "200":
+          description: A JSON array of available tables at a given time - empty if incorrect information is given.
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    tableId:
+                      type: integer
+                    venueTableNumber:
+                      type: integer
+                    numberOfSeats:
+                      type: integer
+      
+
   /venues/top:
     get:
       tags:
