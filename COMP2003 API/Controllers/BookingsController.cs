@@ -23,6 +23,7 @@ namespace COMP2003_API.Controllers
         }
 
         [HttpGet("view")]
+
         public async Task<ActionResult<AppBookingsView>> View(int bookingId, int customerId)
         {
             try

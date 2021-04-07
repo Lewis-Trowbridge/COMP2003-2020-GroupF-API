@@ -25,6 +25,55 @@ namespace COMP2003_API.Controllers
             _context = context;
         }
 
+        //api/venues/tablesAvailable?venueId=1&partySize=4&bookingTime=2001-12-25 18:10:00
+        [HttpGet("tablesAvailable")]
+        public async Task<ActionResult<List<VenueTablesAvailableResult>>> TablesAvailable(int venueId, int partySize, DateTime bookingTime)
+        {
+            List<VenueTablesAvailableResult> returnResults = new List<VenueTablesAvailableResult>();
+
+            List<VenueTables> allPossibleTables = new List<VenueTables>();
+            List<Bookings> allCurrentBookings = new List<Bookings>();
+
+            allPossibleTables = _context.VenueTables.AsEnumerable().Where(
+            venueTable => (venueTable.VenueId == venueId && partySize <= venueTable.VenueTableCapacity)
+            ).ToList();
+
+            allCurrentBookings = _context.Bookings.AsEnumerable().Where(
+            bookingTables => bookingTables.VenueId == venueId
+            ).ToList();
+
+            foreach (VenueTables venueTableView in allPossibleTables)
+            {
+                VenueTablesAvailableResult newResult = new VenueTablesAvailableResult();
+                newResult.TableId = venueTableView.VenueTableId;
+                newResult.NumberOfSeats = venueTableView.VenueTableCapacity;
+                newResult.VenueTableNumber = venueTableView.VenueTableNum;
+
+                bool valid = true;
+                foreach (Bookings bookingView in allCurrentBookings)
+                {
+                    if (bookingView.VenueTableId == venueTableView.VenueTableId)
+                    {
+                        if ((bookingView.BookingTime.AddHours(2) > bookingTime && bookingView.BookingTime.AddHours(-2) < bookingTime))
+                        {
+                            valid = false;
+                        }
+                    }                    
+
+                }
+
+                if (valid)
+                {
+                    returnResults.Add(newResult);
+                }
+                
+                
+            }
+
+            return returnResults;
+        }
+
+
         //api/venues/bookTable?venueTableId=2&customerId=3&bookingTime=2008-08-03 15:10:00&bookingSize=1
         //EXEC book_table @venue_table_id = 2, @customer_id = 3, @booking_time = '2001-12-25 18:10:00', @booking_size = 5
         [HttpPost("bookTable")]
@@ -97,19 +146,39 @@ namespace COMP2003_API.Controllers
 
             if (IsPostcode(searchString)) 
             {
-                //Loop through, rate postcode, put in list.
-                venuesSearched = _context.AppVenueView.AsEnumerable().Where(
-                    venue => RatingPostcode(searchString, venue.VenuePostcode) >= 1
-                    ).ToList();
+                //Loop through, rate postcode, put in list.   
+
+                venuesSearched.AddRange(_context.AppVenueView.AsEnumerable().Where(
+                    venue => RatingPostcode(searchString, venue.VenuePostcode) == 4
+                    ).ToList());
+
+                venuesSearched.AddRange(_context.AppVenueView.AsEnumerable().Where(
+                    venue => RatingPostcode(searchString, venue.VenuePostcode) == 3
+                    ).ToList());
+
+                venuesSearched.AddRange(_context.AppVenueView.AsEnumerable().Where(
+                    venue => RatingPostcode(searchString, venue.VenuePostcode) == 2
+                    ).ToList());
+
+                venuesSearched.AddRange(_context.AppVenueView.AsEnumerable().Where(
+                    venue => RatingPostcode(searchString, venue.VenuePostcode) == 1
+                    ).ToList());
+
+
             }
 
             else
             {
                 // Db lookup where name or city contains search string
-                venuesSearched = _context.AppVenueView.Where(
-                    venue => venue.VenueName.Contains(searchString) ||
-                    venue.City.Contains(searchString)
-                    ).ToList();
+
+                for (int i = 100; i>= 20; i--)
+                {
+                    venuesSearched.AddRange(_context.AppVenueView.AsEnumerable().Where(
+                    venue => RatingLevenshteinDistance(searchString, venue.City) == i ^
+                    RatingLevenshteinDistance(searchString, venue.VenueName) == i
+                    ).ToList());
+                }
+
             }
 
             // Extract the data we need from the venue views
@@ -125,6 +194,57 @@ namespace COMP2003_API.Controllers
             }
 
             return results;
+        }
+
+        private int RatingLevenshteinDistance(string inputWord, string compareAgainst)
+        {            
+
+            if (String.IsNullOrEmpty(inputWord) && String.IsNullOrEmpty(compareAgainst))
+            {
+                return 0;
+            }
+            if (String.IsNullOrEmpty(inputWord))
+            {
+                return 0;
+            }
+            if (String.IsNullOrEmpty(compareAgainst))
+            {
+                return 0;
+            }
+
+            inputWord = inputWord.ToUpper();
+            compareAgainst = compareAgainst.ToUpper();
+
+            int lengthInput = inputWord.Length;
+            int lengthCompare = compareAgainst.Length;
+
+            int[,] distance = new int[lengthInput + 1, lengthCompare + 1];
+
+            for (int i = 0; i <= lengthInput; distance[i, 0] = i++) ;
+            for (int j = 0; j <= lengthCompare; distance[0, j] = j++) ;
+
+            for (int i = 1; i <= lengthInput; i++)
+                for (int j = 1; j <= lengthCompare; j++)
+                {
+                    int cost = compareAgainst[j - 1] == inputWord[i - 1] ? 0 : 1;
+                    distance[i, j] = Math.Min
+                        (
+                        Math.Min(distance[i - 1, j] + 1, distance[i, j - 1] + 1),
+                        distance[i - 1, j - 1] + cost
+                        );
+                }
+
+            int editDifference = distance[lengthInput, lengthCompare];
+
+            int longestWord = lengthInput;
+            if (lengthCompare > longestWord)
+            {
+                longestWord = lengthCompare;
+            }
+
+            double percentageDifference = (100/Convert.ToDouble(longestWord)) * (longestWord - editDifference);
+
+            return (Convert.ToInt32(percentageDifference));
         }
         private int RatingPostcode(string postcodeInputUser, string postcodeInputCompare)
         {
@@ -161,9 +281,14 @@ namespace COMP2003_API.Controllers
 
         private bool IsPostcode(string searchString)
         {
-            Regex rx = new Regex(@"^([A-Z][A-HJ-Y]?\d[A-Zz\d]??\d[A-Z]{2}|GIR ?0A{2})$", RegexOptions.IgnoreCase | RegexOptions.Compiled); //^ $ start, end of text to prevent postcode in a sentence, might be worth changing later?
-            Match match = rx.Match(searchString.Replace(" ", String.Empty)); //Replace " " with blank so that regex can read it, might be worth changing the regex later
-            return match.Success;
+            if(searchString != null)
+            {           
+                Regex rx = new Regex(@"^([A-Z][A-HJ-Y]?\d[A-Zz\d]??\d[A-Z]{2}|GIR ?0A{2})$", RegexOptions.IgnoreCase | RegexOptions.Compiled); //^ $ start, end of text to prevent postcode in a sentence, might be worth changing later?
+                Match match = rx.Match(searchString.Replace(" ", String.Empty)); //Replace " " with blank so that regex can read it, might be worth changing the regex later
+                return match.Success;
+
+            }
+            else { return false; }
         }
     }
 }
