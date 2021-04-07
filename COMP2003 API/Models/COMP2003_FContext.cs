@@ -92,6 +92,12 @@ namespace COMP2003_API.Models
                     .HasColumnName("venue_postcode")
                     .HasMaxLength(10)
                     .IsUnicode(false);
+
+                entity.Property(e => e.VenueTableCapacity).HasColumnName("venue_table_capacity");
+
+                entity.Property(e => e.VenueTableId).HasColumnName("venue_table_id");
+
+                entity.Property(e => e.VenueTableNum).HasColumnName("venue_table_num");
             });
 
             modelBuilder.Entity<AppVenueView>(entity =>
@@ -142,23 +148,23 @@ namespace COMP2003_API.Models
 
             modelBuilder.Entity<BookingAttendees>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => new { e.BookingId, e.CustomerId });
 
                 entity.ToTable("booking_attendees");
-
-                entity.Property(e => e.BookingAttended).HasColumnName("booking_attended");
 
                 entity.Property(e => e.BookingId).HasColumnName("booking_id");
 
                 entity.Property(e => e.CustomerId).HasColumnName("customer_id");
 
+                entity.Property(e => e.BookingAttended).HasColumnName("booking_attended");
+
                 entity.HasOne(d => d.Booking)
-                    .WithMany()
+                    .WithMany(p => p.BookingAttendees)
                     .HasForeignKey(d => d.BookingId)
                     .HasConstraintName("FK__booking_a__booki__36B12243");
 
                 entity.HasOne(d => d.Customer)
-                    .WithMany()
+                    .WithMany(p => p.BookingAttendees)
                     .HasForeignKey(d => d.CustomerId)
                     .HasConstraintName("FK__booking_a__custo__37A5467C");
             });

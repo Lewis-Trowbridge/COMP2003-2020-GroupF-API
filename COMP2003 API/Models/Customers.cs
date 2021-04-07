@@ -10,6 +10,11 @@ namespace COMP2003_API.Models
 {
     public partial class Customers
     {
+        public Customers()
+        {
+            BookingAttendees = new HashSet<BookingAttendees>();
+        }
+
         public int CustomerId { get; set; }
         [Required]
         public string CustomerName { get; set; }
@@ -19,5 +24,6 @@ namespace COMP2003_API.Models
         public string CustomerUsername { get; set; }
         [Required]
         public string CustomerPassword { get; set; }
+        public virtual ICollection<BookingAttendees> BookingAttendees { get; set; }
     }
 }
