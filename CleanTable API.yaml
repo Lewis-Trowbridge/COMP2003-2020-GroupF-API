@@ -227,6 +227,12 @@ paths:
                     type: string
                   county:
                     type: string
+                  venueTableId:
+                    type: integer
+                  venueTableNum:
+                    type: integer
+                  venueTableCapacity:
+                    type: integer
         "204":
           description: Returned when an invalid or inaccessible booking ID is given
           
