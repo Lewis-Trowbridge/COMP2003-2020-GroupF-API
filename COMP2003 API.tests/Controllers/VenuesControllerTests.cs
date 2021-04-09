@@ -12,6 +12,54 @@ namespace COMP2003_API.Tests.Controllers
 {
     public class VenuesControllerTests
     {
+
+        [Fact]
+        public async void View_ValidVenue_ReturnsVenueInformation()
+        {
+            // Arrange
+            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            VenuesController controller = new VenuesController(dbContext);
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
+            Venues testVenue = COMP2003TestHelper.GetTestVenue(0);
+
+            await dbContext.Venues.AddAsync(testVenue);
+            await dbContext.SaveChangesAsync();
+
+            // Act
+            ActionResult<AppVenueView> actionResult = await controller.View(testVenue.VenueId);
+            var okObjectResult = actionResult.Result as OkObjectResult;
+            var result = (AppVenueView)okObjectResult.Value;
+
+            // Assert
+            // Since these are different types of objects, it is necessary to compare each value seperately
+            Assert.Equal(testVenue.VenueId, result.VenueId);
+            Assert.Equal(testVenue.VenueName, result.VenueName);
+            Assert.Equal(testVenue.VenuePostcode, result.VenuePostcode);
+            Assert.Equal(testVenue.AddLineOne, result.AddLineOne);
+            Assert.Equal(testVenue.AddLineTwo, result.AddLineTwo);
+            Assert.Equal(testVenue.City, result.City);
+            Assert.Equal(testVenue.County, result.County);
+        }
+
+        [Fact]
+        public async void View_NonexistentVenue_Fails()
+        {
+            // Arrange
+            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            VenuesController controller = new VenuesController(dbContext);
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
+            Venues testVenue = COMP2003TestHelper.GetTestVenue(0);
+
+            await dbContext.Venues.AddAsync(testVenue);
+            await dbContext.SaveChangesAsync();
+
+            // Act
+            ActionResult<AppVenueView> actionResult = await controller.View(testVenue.VenueId + 1);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(actionResult.Result);
+        }
+
         [Fact]
         public async void ViewTop_Returns_ListOfAppVenueViews()
         {
