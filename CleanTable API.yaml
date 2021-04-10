@@ -235,6 +235,30 @@ paths:
                     type: integer
         "204":
           description: Returned when an invalid or inaccessible booking ID is given
+  
+  /bookings/history:
+    get:
+      tags:
+      - Bookings
+      summary: Gets a customer's booking history
+      description: Gets a minified version all of the bookings that a customer has made in the past in descending order (most recent first)
+      parameters:
+        - in: query
+          name: customerId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A list of the bookings the customer has made in the past. Can be empty if the customer has no bookings in their history.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MinifiedBookingResult"
+        "404":
+          description: The customer account could not be found.
           
   /bookings/delete:
     delete:
@@ -385,5 +409,20 @@ components:
           type: string
         totalCapacity:
           type: integer
+          
+    MinifiedBookingResult:
+      type: object
+      properties:
+          bookingId:
+            type: integer
+          bookingDateTime:
+            type: string
+            format: date-time
+          bookingSize:
+            type: integer
+          venueName:
+            type: string
+          venuePostcode:
+            type: string
           
           
