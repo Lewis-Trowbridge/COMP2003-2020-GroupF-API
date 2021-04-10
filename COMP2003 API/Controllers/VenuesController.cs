@@ -127,9 +127,27 @@ namespace COMP2003_API.Controllers
             return output;
         }
 
+        [HttpGet("view")]
+        public async Task<ActionResult<AppVenueView>> View(int venueId)
+        {
+            try
+            {
+                AppVenueView venue = await _context.AppVenueView
+                .Where(venue => venue.VenueId.Equals(venueId))
+                .FirstAsync();
+                return Ok(venue);
+            }
+
+            catch (InvalidOperationException)
+            {
+                return NotFound();
+            }
+        }
+
         [HttpGet("top")]
         public async Task<ActionResult<List<AppVenueView>>> ViewTop()
         {
+            // Specify variable in order for easy changing if necessary in future
             int numberToReturn = 30;
             List<AppVenueView> topViews = await _context.AppVenueView
                 .Take(numberToReturn)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using COMP2003_API.Models;
 using COMP2003_API.Responses;
 
 namespace COMP2003_API.Tests.Helpers
@@ -43,6 +44,19 @@ namespace COMP2003_API.Tests.Helpers
             {
                 Success = false,
                 Message = "Deletion failed - booking does not exist."
+            };
+            return result;
+        }
+
+        public static MinifiedBookingResult GetMinifiedBookingResult(Bookings booking)
+        {
+            MinifiedBookingResult result = new MinifiedBookingResult
+            {
+                BookingId = booking.BookingId,
+                BookingDateTime = booking.BookingTime,
+                BookingSize = booking.BookingSize,
+                VenueName = booking.Venue.VenueName,
+                VenuePostcode = booking.Venue.VenuePostcode
             };
             return result;
         }
