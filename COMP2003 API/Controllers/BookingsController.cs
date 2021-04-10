@@ -47,6 +47,39 @@ namespace COMP2003_API.Controllers
             }
         }
 
+        [HttpGet("history")]
+        public async Task<ActionResult<List<MinifiedBookingResult>>> ViewHistory(int customerId)
+        {
+            bool customerExists = await _context.Customers.AnyAsync(customer => customer.CustomerId.Equals(customerId));
+            if (customerExists)
+            {
+                List<MinifiedBookingResult> resultList = new List<MinifiedBookingResult>();
+                var bookings = _context.AppBookingsView
+                    .Where(booking => booking.CustomerId.Equals(customerId))
+                    .Where(booking => booking.BookingTime < DateTime.Now)
+                    .OrderByDescending(booking => booking.BookingTime);
+                foreach (var booking in bookings)
+                {
+                    MinifiedBookingResult result = new MinifiedBookingResult
+                    {
+                        BookingId = booking.BookingId,
+                        BookingDateTime = booking.BookingTime,
+                        BookingSize = booking.BookingSize,
+                        VenueName = booking.VenueName,
+                        VenuePostcode = booking.VenuePostcode
+                    };
+                    resultList.Add(result);
+                }
+
+                return Ok(resultList);
+            }
+
+            else
+            {
+                return NotFound();
+            }
+        }
+
         [HttpDelete("delete")]
         public async Task<ActionResult<DeletionResult>> Delete(int bookingId)
         {
