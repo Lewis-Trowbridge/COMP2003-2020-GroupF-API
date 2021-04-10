@@ -260,6 +260,30 @@ paths:
         "404":
           description: The customer account could not be found.
           
+  /bookings/upcoming:
+    get:
+      tags:
+      - Bookings
+      summary: Gets a customer's upcoming bookings
+      description: Gets a minified version all of the bookings that a customer has upcoming in the future in ascending order (most recent first)
+      parameters:
+        - in: query
+          name: customerId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A list of the bookings the customer has upcoming in the future. Can be empty if the customer has no bookings in their history.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MinifiedBookingResult"
+        "404":
+          description: The customer account could not be found.
+          
   /bookings/delete:
     delete:
       tags:
