@@ -38,5 +38,10 @@ namespace COMP2003_API.Tests.Helpers
             await dbContext.SaveChangesAsync();
 
         }
+
+        public static bool DateTimesInOneSecondRange(DateTime datetime1, DateTime datetime2)
+        {
+            return datetime1 >= datetime2.AddSeconds(-0.5) && datetime1 < datetime2.AddSeconds(0.5);
+        }
     }
 }
