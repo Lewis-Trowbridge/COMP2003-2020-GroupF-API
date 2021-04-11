@@ -86,6 +86,28 @@ namespace COMP2003_API.Tests.Controllers
 
         }
 
+        [Theory]
+        [InlineData("310298309183091904731908")]
+        [InlineData("2")]
+        public async void Create_WithInvalidPhoneNumber_Fails(string phoneNumber)
+        {
+            // Arrange
+            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            CustomersController controller = new CustomersController(dbContext);
+            CreationResult expectedResult = CustomersControllerTestHelper.GetInvalidContactNumberResult();
+            CreateCustomer creationRequest = CustomersControllerTestHelper.GetTestCreateCustomer();
+            creationRequest.CustomerContactNumber = phoneNumber;
+
+            // Act
+            ActionResult<CreationResult> actionResult = await controller.Create(creationRequest);
+            var objectResult = actionResult.Result as BadRequestObjectResult;
+            var realResult = (CreationResult)objectResult.Value;
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(actionResult.Result);
+            Assert.Equal(expectedResult, realResult);
+        }
+
         [Fact]
         public async void Delete_ExistingUser_DeletesSuccessfully()
         {
