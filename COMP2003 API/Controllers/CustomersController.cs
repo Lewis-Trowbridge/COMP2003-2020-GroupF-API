@@ -44,7 +44,7 @@ namespace COMP2003_API.Controllers
                     int newId = Convert.ToInt32(response.Substring(3));
                     result.Success = true;
                     result.Id = newId;
-                    result.Message = "Customer account created.";
+                    result.Message = "A customer account has been created.";
                     return Ok(result);
 
                 case "208":
