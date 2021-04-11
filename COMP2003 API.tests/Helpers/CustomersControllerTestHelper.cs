@@ -29,6 +29,16 @@ namespace COMP2003_API.Tests.Helpers
             return result;
         }
 
+        public static CreationResult GetInvalidContactNumberResult()
+        {
+            CreationResult result = new CreationResult
+            {
+                Success = false,
+                Message = "A validation error has occured with the submitted contact number."
+            };
+            return result;
+        }
+
         public static CreateCustomer GetTestCreateCustomer()
         {
             CreateCustomer customer = new CreateCustomer
