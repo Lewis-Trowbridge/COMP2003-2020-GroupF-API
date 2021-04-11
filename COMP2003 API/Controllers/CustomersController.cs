@@ -25,7 +25,7 @@ namespace COMP2003_API.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<CreationResult>> Create(Customers customer)
+        public async Task<ActionResult<CreationResult>> Create(CreateCustomer customer)
         {
             CreationResult result = new CreationResult();
             if (!ModelState.IsValid)

@@ -11,6 +11,7 @@ namespace COMP2003_API.Tests.Controllers
 {
     public class CustomersControllerTests
     {
+
         [Fact]
         public async void Create_ReturnsBadResult_ForNullParameters()
         {
@@ -18,7 +19,7 @@ namespace COMP2003_API.Tests.Controllers
             CustomersController controller = new CustomersController(dbContext);
             controller.ModelState.AddModelError("error", "Invalid Model parameters");
 
-            ActionResult<CreationResult> result = await controller.Create(new Customers());
+            ActionResult<CreationResult> result = await controller.Create(new CreateCustomer());
 
             Assert.IsType<BadRequestObjectResult>(result.Result);
 
