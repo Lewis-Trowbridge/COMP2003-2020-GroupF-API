@@ -34,7 +34,7 @@ namespace COMP2003_API.Tests.Helpers
             CreateCustomer customer = new CreateCustomer
             {
                 CustomerName = "Test User",
-                CustomerContactNumber = "01984454191",
+                CustomerContactNumber = "+441984454191",
                 CustomerUsername = "TestUser",
                 CustomerPassword = "TestPassword"
             };
