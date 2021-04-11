@@ -421,6 +421,8 @@ components:
       properties:
         venueId:
           type: integer
+        venueName:
+          type: string
         venuePostcode:
           type: string
         addLineOne:
