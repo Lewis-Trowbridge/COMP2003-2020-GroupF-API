@@ -13,7 +13,68 @@ namespace COMP2003_API.Tests.Controllers
     {
 
         [Fact]
-        public async void Create_ReturnsBadResult_ForNullParameters()
+        public async void Create_WithValidInputs_AddsSuccessfully()
+        {
+            // Arrange
+            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
+            CustomersController controller = new CustomersController(dbContext);
+            CreationResult expectedResult = CustomersControllerTestHelper.GetSuccessfulCreationResult();
+            CreateCustomer creationRequest = CustomersControllerTestHelper.GetTestCreateCustomer();
+
+            // Act
+            ActionResult<CreationResult> actionResult = await controller.Create(creationRequest);
+            var okObjectResult = actionResult.Result as OkObjectResult;
+            var realResult = (CreationResult)okObjectResult.Value;
+
+            Customers createdCustomer = dbContext.Customers.Find(realResult.Id);
+
+            Assert.Contains(createdCustomer, dbContext.Customers);
+            Assert.Equal(creationRequest.CustomerName, createdCustomer.CustomerName);
+            Assert.Equal(creationRequest.CustomerContactNumber, createdCustomer.CustomerContactNumber);
+            Assert.Equal(creationRequest.CustomerUsername, createdCustomer.CustomerUsername);
+            // Password should be hashed, so they should not be equal
+            Assert.NotEqual(creationRequest.CustomerPassword, createdCustomer.CustomerPassword);
+
+            // As it is not possible to know the ID before it's created this cannot be tested for but
+            // the ID should not be 0 if the creation has gone to plan
+            Assert.NotEqual(0, realResult.Id);
+            Assert.Equal(expectedResult.Success, realResult.Success);
+            Assert.Equal(expectedResult.Message, realResult.Message);
+
+
+        }
+
+        [Fact]
+        public async void Create_ExistingUser_Fails()
+        {
+            // Arrange
+            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            CustomersController controller = new CustomersController(dbContext);
+            CreationResult expectedResult = CustomersControllerTestHelper.GetAlreadyCreatedResult();
+            CreateCustomer creationRequest = CustomersControllerTestHelper.GetTestCreateCustomer();
+            Customers createdCustomer = COMP2003TestHelper.GetTestCustomer(0);
+
+            // Insert customer in order to trigger already existing error
+            await dbContext.Customers.AddAsync(createdCustomer);
+            await dbContext.SaveChangesAsync();
+
+            // Act
+            ActionResult<CreationResult> actionResult = await controller.Create(creationRequest);
+            var objectResult = actionResult.Result as ObjectResult;
+            var realResult = (CreationResult)objectResult.Value;
+
+            // Assert
+            Assert.Equal(208, objectResult.StatusCode);
+            Assert.Equal(expectedResult, realResult);
+
+            // Cleanup
+            dbContext.Remove(createdCustomer);
+            await dbContext.SaveChangesAsync();
+        }
+
+        [Fact]
+        public async void Create_WithMissingInputs_Fails()
         {
             COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
             CustomersController controller = new CustomersController(dbContext);
