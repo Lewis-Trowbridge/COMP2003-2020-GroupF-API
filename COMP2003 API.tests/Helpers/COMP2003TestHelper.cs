@@ -18,7 +18,7 @@ namespace COMP2003_API.Tests.Helpers
             Customers customer = new Customers();
             customer.CustomerId = id;
             customer.CustomerName = "Test User";
-            customer.CustomerContactNumber = "01984454191";
+            customer.CustomerContactNumber = "+441984454191";
             customer.CustomerUsername = "TestUser";
             customer.CustomerPassword = "TestPassword";
 
