@@ -56,7 +56,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/AppVenueView"
+                  $ref: "#/components/schemas/MinifiedVenueResult"
                   
     
 
@@ -81,16 +81,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    name:
-                      type: string
-                    city:
-                      type: string
-                    postcode:
-                      type: string
+                  $ref: "#/components/schemas/MinifiedVenueResult"
                       
                       
   /venues/bookTable/:
@@ -451,4 +442,15 @@ components:
           venuePostcode:
             type: string
           
+    MinifiedVenueResult:
+      type: object
+      properties:
+        venueId:
+          type: integer
+        venueName:
+          type: string
+        venueCity:
+          type: string
+        venuePostcode:
+          type: string
           
