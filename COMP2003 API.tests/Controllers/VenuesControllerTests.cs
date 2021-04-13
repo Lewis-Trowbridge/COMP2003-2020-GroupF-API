@@ -61,19 +61,19 @@ namespace COMP2003_API.Tests.Controllers
         }
 
         [Fact]
-        public async void ViewTop_Returns_ListOfAppVenueViews()
+        public async void ViewTop_Returns_ListOfMinifiedVenueResults()
         {
             // Arrange
             COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
             VenuesController controller = new VenuesController(dbContext);
 
             // Act
-            ActionResult<List<AppVenueView>> actionResult = await controller.ViewTop();
+            ActionResult<List<MinifiedVenueResult>> actionResult = await controller.ViewTop();
             var okObjectResult = actionResult.Result as OkObjectResult;
-            var result = (List<AppVenueView>)okObjectResult.Value;
+            var result = (List<MinifiedVenueResult>)okObjectResult.Value;
 
             // Assert
-            Assert.IsType<List<AppVenueView>>(result);
+            Assert.IsType<List<MinifiedVenueResult>>(result);
 
         }
 

@@ -145,21 +145,28 @@ namespace COMP2003_API.Controllers
         }
 
         [HttpGet("top")]
-        public async Task<ActionResult<List<AppVenueView>>> ViewTop()
+        public async Task<ActionResult<List<MinifiedVenueResult>>> ViewTop()
         {
             // Specify variable in order for easy changing if necessary in future
             int numberToReturn = 30;
-            List<AppVenueView> topViews = await _context.AppVenueView
+            List<MinifiedVenueResult> topViews = await _context.AppVenueView
                 .Take(numberToReturn)
+                .Select(view => new MinifiedVenueResult
+                {
+                    VenueId = view.VenueId,
+                    VenueName = view.VenueName,
+                    VenueCity = view.City,
+                    VenuePostcode = view.VenuePostcode
+                })
                 .ToListAsync();
             return Ok(topViews);
         }
 
 
         [HttpGet("search")]
-        public ActionResult<List<VenuesSearchResult>> Search(string searchString)
+        public ActionResult<List<MinifiedVenueResult>> Search(string searchString)
         {
-            List<VenuesSearchResult> results = new List<VenuesSearchResult>();
+            List<MinifiedVenueResult> results = new List<MinifiedVenueResult>();
             List<AppVenueView> venuesSearched = new List<AppVenueView>();
 
             if (IsPostcode(searchString)) 
@@ -202,11 +209,11 @@ namespace COMP2003_API.Controllers
             // Extract the data we need from the venue views
             foreach (AppVenueView venueView in venuesSearched)
             {
-                VenuesSearchResult newResult = new VenuesSearchResult();
-                newResult.Id = venueView.VenueId;
-                newResult.Name = venueView.VenueName;
-                newResult.City = venueView.City;
-                newResult.Postcode = venueView.VenuePostcode;
+                MinifiedVenueResult newResult = new MinifiedVenueResult();
+                newResult.VenueId = venueView.VenueId;
+                newResult.VenueName = venueView.VenueName;
+                newResult.VenueCity = venueView.City;
+                newResult.VenuePostcode = venueView.VenuePostcode;
 
                 results.Add(newResult);
             }
