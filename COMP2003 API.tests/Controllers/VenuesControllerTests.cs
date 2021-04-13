@@ -77,6 +77,60 @@ namespace COMP2003_API.Tests.Controllers
 
         }
 
+        [Theory]
+        [InlineData("Test venue")]
+        [InlineData("PL4 8AA")]
+        [InlineData("PL48AA")]
+        [InlineData("Test city")]
+        public async void Search_ForExistingVenue_ReturnsMatchingVenues(string searchString)
+        {
+            // Arrange
+            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
+            VenuesController controller = new VenuesController(dbContext);
+
+            Venues testVenue = COMP2003TestHelper.GetTestVenue(0);
+            await dbContext.AddAsync(testVenue);
+            await dbContext.SaveChangesAsync();
+
+            MinifiedVenueResult expectedResult = VenuesControllerTestHelper.GetMinifiedVenueResult(testVenue);
+
+            // Act
+            ActionResult<List<MinifiedVenueResult>> actionResult = await controller.Search(searchString);
+            var okObjectResult = actionResult.Result as OkObjectResult;
+            var realList = (List<MinifiedVenueResult>)okObjectResult.Value;
+
+
+            // Assert
+            Assert.Contains(expectedResult, realList);
+        }
+
+        [Theory]
+        [InlineData("%^%//!")]
+        [InlineData("WQ31 3RR")]
+        public async void Search_ForNonexistentVenue_ReturnsEmptyList(string searchString)
+        {
+            // Arrange
+            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
+            VenuesController controller = new VenuesController(dbContext);
+
+            Venues testVenue = COMP2003TestHelper.GetTestVenue(0);
+            await dbContext.AddAsync(testVenue);
+            await dbContext.SaveChangesAsync();
+
+            MinifiedVenueResult expectedResult = VenuesControllerTestHelper.GetMinifiedVenueResult(testVenue);
+
+            // Act
+            ActionResult<List<MinifiedVenueResult>> actionResult = await controller.Search(searchString);
+            var okObjectResult = actionResult.Result as OkObjectResult;
+            var realList = (List<MinifiedVenueResult>)okObjectResult.Value;
+
+
+            // Assert
+            Assert.Empty(realList);
+        }
+
         [Fact]
         public async void TablesAvailable_CorrectPartySizeAndTime()
         {

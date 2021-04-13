@@ -164,7 +164,7 @@ namespace COMP2003_API.Controllers
 
 
         [HttpGet("search")]
-        public ActionResult<List<MinifiedVenueResult>> Search(string searchString)
+        public async Task<ActionResult<List<MinifiedVenueResult>>> Search(string searchString)
         {
             List<MinifiedVenueResult> results = new List<MinifiedVenueResult>();
             List<AppVenueView> venuesSearched = new List<AppVenueView>();
@@ -218,7 +218,7 @@ namespace COMP2003_API.Controllers
                 results.Add(newResult);
             }
 
-            return results;
+            return Ok(results);
         }
 
         private int RatingLevenshteinDistance(string inputWord, string compareAgainst)
