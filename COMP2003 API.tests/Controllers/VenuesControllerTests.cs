@@ -77,6 +77,34 @@ namespace COMP2003_API.Tests.Controllers
 
         }
 
+        [Fact]
+        public async void ViewTop_ReturnsOnlyTopVenues()
+        {
+            // Arrange
+            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
+            VenuesController controller = new VenuesController(dbContext);
+           
+
+            // Add 31 venues to ensure that there are more than 30 venues in the database
+            for (int i = 0; i < 31; i++)
+            {
+                Venues testVenue = COMP2003TestHelper.GetTestVenue(0);
+                await dbContext.AddAsync(testVenue);
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            // Act
+            ActionResult<List<MinifiedVenueResult>> actionResult = await controller.ViewTop();
+            var okObjectResult = actionResult.Result as OkObjectResult;
+            var result = (List<MinifiedVenueResult>)okObjectResult.Value;
+
+            // Assert
+            Assert.True(result.Count == 30);
+            
+        }
+
         [Theory]
         [InlineData("Test venue")]
         [InlineData("PL4 8AA")]
