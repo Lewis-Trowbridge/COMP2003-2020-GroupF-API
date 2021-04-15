@@ -113,6 +113,7 @@ namespace COMP2003_API.Tests.Controllers
         {
             // Arrange
             COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            using var transaction = dbContext.Database.BeginTransactionAsync();
             CustomersController controller = new CustomersController(dbContext);
             Customers testCustomer = COMP2003TestHelper.GetTestCustomer(0);
 
@@ -135,6 +136,7 @@ namespace COMP2003_API.Tests.Controllers
         {
             // Arrange
             COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            using var transaction = dbContext.Database.BeginTransactionAsync();
             CustomersController controller = new CustomersController(dbContext);
             Customers testCustomer = COMP2003TestHelper.GetTestCustomer(0);
 
