@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace COMP2003_API.Requests
 {
-    public class CreateCustomer
+    public struct CreateCustomer
     {
         [JsonRequired]
         public string CustomerName { get; set; }

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace COMP2003_API.Requests
 {
-    public class CreateBooking
+    public struct CreateBooking
     {
         [JsonRequired]
         public int VenueTableId { get; set; }

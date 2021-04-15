@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace COMP2003_API.Responses
 {
-    public class MinifiedBookingResult
+    public struct MinifiedBookingResult
     {
         public int BookingId { get; set; }
         public DateTime BookingDateTime { get; set; }
