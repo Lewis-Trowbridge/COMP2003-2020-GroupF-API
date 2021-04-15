@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using COMP2003_API.Models;
 using COMP2003_API.Requests;
 using COMP2003_API.Responses;
 
@@ -49,6 +50,18 @@ namespace COMP2003_API.Tests.Helpers
                 CustomerPassword = "TestPassword"
             };
             return customer;
+        }
+
+        public static MinifiedCustomerResult GetMinifiedCustomerResult(Customers customer)
+        {
+            MinifiedCustomerResult result = new MinifiedCustomerResult
+            {
+                CustomerId = customer.CustomerId,
+                CustomerContactNumber = customer.CustomerContactNumber,
+                CustomerName = customer.CustomerName,
+                CustomerUsername = customer.CustomerUsername
+            };
+            return result;
         }
     }
 }

@@ -71,6 +71,12 @@ namespace COMP2003_API.Controllers
 
         }
 
+        [HttpGet("view")]
+        public async Task<ActionResult<MinifiedCustomerResult>> View(int customerId)
+        {
+            throw new NotImplementedException();
+        }
+
         [HttpDelete("delete")]
         public async Task<ActionResult<DeletionResult>> Delete(int customerId)
         {
@@ -104,7 +110,7 @@ namespace COMP2003_API.Controllers
                 var phoneNumber = phoneNumberUtil.Parse(contactNumber, "GB");
                 if (phoneNumberUtil.IsValidNumberForRegion(phoneNumber, "GB")) 
                 {
-                    // If the phone number if a valid UK number, reurn the formatted string
+                    // If the phone number if a valid UK number, return the formatted string
                     return phoneNumberUtil.Format(phoneNumber, PhoneNumberFormat.E164);
                 }
                 // If the phone number is not a valid UK number, signal this with a null

@@ -109,6 +109,46 @@ namespace COMP2003_API.Tests.Controllers
         }
 
         [Fact]
+        public async void View_ValidUser_ReturnsUserInformation()
+        {
+            // Arrange
+            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            CustomersController controller = new CustomersController(dbContext);
+            Customers testCustomer = COMP2003TestHelper.GetTestCustomer(0);
+
+            await dbContext.AddAsync(testCustomer);
+            await dbContext.SaveChangesAsync();
+
+            MinifiedCustomerResult testResult = CustomersControllerTestHelper.GetMinifiedCustomerResult(testCustomer);
+
+            // Act
+            ActionResult<MinifiedCustomerResult> actionResult = await controller.View(testCustomer.CustomerId);
+            var okObjectResult = actionResult.Result as OkObjectResult;
+            var realResult = (MinifiedCustomerResult)okObjectResult.Value;
+
+            // Assert
+            Assert.Equal(testResult, realResult);
+        }
+
+        [Fact]
+        public async void View_NonexistentUser_Fails()
+        {
+            // Arrange
+            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            CustomersController controller = new CustomersController(dbContext);
+            Customers testCustomer = COMP2003TestHelper.GetTestCustomer(0);
+
+            await dbContext.AddAsync(testCustomer);
+            await dbContext.SaveChangesAsync();
+
+            // Act
+            ActionResult<MinifiedCustomerResult> actionResult = await controller.View(testCustomer.CustomerId + 1);
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(actionResult.Result);
+        }
+
+        [Fact]
         public async void Delete_ExistingUser_DeletesSuccessfully()
         {
             // Arrange
