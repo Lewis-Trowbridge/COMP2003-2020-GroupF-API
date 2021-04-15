@@ -74,7 +74,26 @@ namespace COMP2003_API.Controllers
         [HttpGet("view")]
         public async Task<ActionResult<MinifiedCustomerResult>> View(int customerId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                MinifiedCustomerResult result = await _context.Customers
+                    .Where(customer => customer.CustomerId.Equals(customerId))
+                    .Select(customer => new MinifiedCustomerResult
+                    {
+                        CustomerId = customer.CustomerId,
+                        CustomerName = customer.CustomerName,
+                        CustomerContactNumber = customer.CustomerContactNumber,
+                        CustomerUsername = customer.CustomerUsername
+                    })
+                    .FirstAsync();
+                return Ok(result);
+            }
+            catch (InvalidOperationException)
+            {
+                return NotFound();
+            }
+
+
         }
 
         [HttpDelete("delete")]
