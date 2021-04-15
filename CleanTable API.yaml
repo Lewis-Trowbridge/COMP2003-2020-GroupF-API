@@ -351,6 +351,29 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreationResult"
                 
+  /customers/view:
+    get:
+      tags:
+      - Customers
+      summary: Gets a customer's information
+      description: Gets a customer's information, minus the password for obvious security reasons.
+      parameters:
+        - in: query
+          name: customerId
+          required: true
+          schema:
+            type: integer
+          
+      responses:
+        "200":
+          description: The customer's information, minus password.
+          content:  
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MinifiedCustomerResult"
+        "404":
+          description: The customer account could not be found.
+                
   /customers/delete:
     delete:
       tags:
@@ -427,6 +450,18 @@ components:
         totalCapacity:
           type: integer
           
+    MinifiedCustomerResult:
+      type: object
+      properties:
+        customerId:
+          type: integer
+        customerName:
+          type: string
+        customerContactNumber:
+          type: string
+        customerUsername:
+          type: string
+      
     MinifiedBookingResult:
       type: object
       properties:
