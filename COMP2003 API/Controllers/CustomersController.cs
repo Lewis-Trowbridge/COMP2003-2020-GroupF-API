@@ -9,7 +9,8 @@ using Microsoft.Data.SqlClient;
 using COMP2003_API.Models;
 using COMP2003_API.Requests;
 using COMP2003_API.Responses;
-using BCrypt;
+using BCrypt.Net;
+using PhoneNumbers;
 
 namespace COMP2003_API.Controllers
 {
@@ -25,26 +26,36 @@ namespace COMP2003_API.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<CreationResult>> Create(Customers customer)
+        public async Task<ActionResult<CreationResult>> Create(CreateCustomer customer)
         {
+
             CreationResult result = new CreationResult();
             if (!ModelState.IsValid)
             {
                 result.Success = false;
-                result.Message = "A validation error occured.";
+                result.Message = "An unspecified validation error has occured.";
+                return BadRequest(result);
+            }
+            // Check phone number is valid and return specific error message if it is not
+            string formattedContactNumber = TryConvertContactNumber(customer.CustomerContactNumber);
+            if (formattedContactNumber == null)
+            {
+                result.Success = false;
+                result.Message = "A validation error has occured with the submitted contact number.";
                 return BadRequest(result);
             }
 
             // Hash password using BCrypt using OWASP's recommended work factor of 12
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(customer.CustomerPassword, workFactor: 12);
-            string response = await CallAddCustomerSP(customer.CustomerName, customer.CustomerContactNumber, customer.CustomerUsername, hashedPassword);
+
+            string response = await CallAddCustomerSP(customer.CustomerName, formattedContactNumber, customer.CustomerUsername, hashedPassword);
             switch (response.Substring(0, 3))
             {
                 case "200":
                     int newId = Convert.ToInt32(response.Substring(3));
                     result.Success = true;
                     result.Id = newId;
-                    result.Message = "Customer account created.";
+                    result.Message = "A customer account has been created.";
                     return Ok(result);
 
                 case "208":
@@ -57,6 +68,31 @@ namespace COMP2003_API.Controllers
                     result.Message = "An unspecified server error has occured.";
                     return StatusCode(500, result);
             }
+
+        }
+
+        [HttpGet("view")]
+        public async Task<ActionResult<MinifiedCustomerResult>> View(int customerId)
+        {
+            try
+            {
+                MinifiedCustomerResult result = await _context.Customers
+                    .Where(customer => customer.CustomerId.Equals(customerId))
+                    .Select(customer => new MinifiedCustomerResult
+                    {
+                        CustomerId = customer.CustomerId,
+                        CustomerName = customer.CustomerName,
+                        CustomerContactNumber = customer.CustomerContactNumber,
+                        CustomerUsername = customer.CustomerUsername
+                    })
+                    .FirstAsync();
+                return Ok(result);
+            }
+            catch (InvalidOperationException)
+            {
+                return NotFound();
+            }
+
 
         }
 
@@ -83,6 +119,31 @@ namespace COMP2003_API.Controllers
                     result.Message = "An unspecifed server error has occured.";
                     return StatusCode(500, result);
             }
+        }
+
+        private string TryConvertContactNumber(string contactNumber)
+        {
+            var phoneNumberUtil = PhoneNumberUtil.GetInstance();
+            try
+            {
+                var phoneNumber = phoneNumberUtil.Parse(contactNumber, "GB");
+                if (phoneNumberUtil.IsValidNumberForRegion(phoneNumber, "GB")) 
+                {
+                    // If the phone number if a valid UK number, return the formatted string
+                    return phoneNumberUtil.Format(phoneNumber, PhoneNumberFormat.E164);
+                }
+                // If the phone number is not a valid UK number, signal this with a null
+                else
+                {
+                    return null;
+                }
+            }
+            // If there are any general issues with the formatting of the phone number, signal this with a null
+            catch (NumberParseException)
+            {
+                return null;
+            }
+
         }
 
         private async Task<string> CallAddCustomerSP(string customerName, string customerContactNumber, string customerUsername, string hashedPassword)

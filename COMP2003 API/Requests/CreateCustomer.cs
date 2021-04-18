@@ -6,15 +6,15 @@ using Newtonsoft.Json;
 
 namespace COMP2003_API.Requests
 {
-    public struct CreateBooking
+    public struct CreateCustomer
     {
         [JsonRequired]
-        public int VenueTableId { get; set; }
+        public string CustomerName { get; set; }
         [JsonRequired]
-        public int CustomerId { get; set; }
+        public string CustomerContactNumber { get; set; }
         [JsonRequired]
-        public DateTime BookingDateTime { get; set; }
+        public string CustomerUsername { get; set; }
         [JsonRequired]
-        public int BookingSize { get; set; }
+        public string CustomerPassword { get; set; }
     }
 }
