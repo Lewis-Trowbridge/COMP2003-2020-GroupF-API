@@ -120,5 +120,59 @@ namespace COMP2003_API.Controllers
             return (string)parameters[1].Value;
         }
 
+
+        [HttpPut("edit")]
+        public async Task<ActionResult<EditResult>> Edit(EditCustomer customer)
+        {
+            EditResult result = new EditResult();
+            if (!ModelState.IsValid)
+            {
+                result.Success = false;
+                result.Message = "A validation error occured.";               
+                return BadRequest(result);
+            }
+
+            // Hash password using BCrypt using OWASP's recommended work factor of 12
+            string hashedPassword = "";
+            if (customer.CustomerPassword != "" && customer.CustomerPassword != null)
+            {
+                hashedPassword = BCrypt.Net.BCrypt.HashPassword(customer.CustomerPassword, workFactor: 12);
+            }
+            
+            int response = await CallEditCustomerSP(customer.CustomerId, customer.CustomerName, customer.CustomerContactNumber, customer.CustomerUsername, hashedPassword);            
+            switch (response)
+            {
+                case 200:
+                    result.Success = true;
+                    result.Message = "Customer details edited.";
+                    return Ok(result);
+                case 404:
+                    result.Success = false;
+                    result.Message = "Customer not found.";
+                    return StatusCode(404, result);
+
+                default:
+                    result.Success = false;
+                    result.Message = "An unspecified server error has occured.";
+                    return StatusCode(500, result);
+            }
+        }
+        private async Task<int> CallEditCustomerSP(int customerId, string customerName, string customerContactNumber, string customerUsername, string hashedPassword)
+        {
+            SqlParameter[] parameters = new SqlParameter[6];
+            parameters[0] = new SqlParameter("@customer_id", customerId);
+            parameters[1] = new SqlParameter("@customer_name", customerName);
+            parameters[2] = new SqlParameter("@customer_contact_number", customerContactNumber);
+            parameters[3] = new SqlParameter("@customer_username", customerUsername);
+            parameters[4] = new SqlParameter("@customer_password", hashedPassword);
+            parameters[5] = new SqlParameter("@response_message", 0);
+
+            parameters[5].Direction = System.Data.ParameterDirection.Output;
+
+            await _context.Database.ExecuteSqlRawAsync("EXEC edit_customer @customer_id, @customer_name, @customer_contact_number, @customer_username, @customer_password, @response_message OUTPUT", parameters);
+
+            return Convert.ToInt32(parameters[5].Value);
+        }
+
     }
 }

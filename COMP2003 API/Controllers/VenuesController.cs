@@ -70,7 +70,7 @@ namespace COMP2003_API.Controllers
                 
             }
 
-            return returnResults;
+            return Ok(returnResults);
         }
 
 
@@ -138,6 +138,7 @@ namespace COMP2003_API.Controllers
         }
 
 
+        //api/venues/search? searchString = seafood
         [HttpGet("search")]
         public ActionResult<List<VenuesSearchResult>> Search(string searchString)
         {
@@ -196,6 +197,7 @@ namespace COMP2003_API.Controllers
             return results;
         }
 
+        //https://stackoverflow.com/questions/9453731/how-to-calculate-distance-similarity-measure-of-given-2-strings
         private int RatingLevenshteinDistance(string inputWord, string compareAgainst)
         {            
 
