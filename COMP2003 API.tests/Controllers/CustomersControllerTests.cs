@@ -32,7 +32,7 @@ namespace COMP2003_API.Tests.Controllers
             var controller = new CustomersController(dbContext);
             using var transaction = await dbContext.Database.BeginTransactionAsync();
             var testCustomer = COMP2003TestHelper.GetTestCustomer(0);
-            var expectedDeletionResult = ResponseTestHelper.GetSuccessfulDeletionResult();
+            var expectedDeletionResult = ResponseTestHelper.GetSuccessfulAcccountDeletionResult();
 
             await dbContext.Customers.AddAsync(testCustomer);
             await dbContext.SaveChangesAsync();
@@ -56,7 +56,7 @@ namespace COMP2003_API.Tests.Controllers
             var dbContext = COMP2003TestHelper.GetDbContext();
             var controller = new CustomersController(dbContext);
             var testCustomer = COMP2003TestHelper.GetTestCustomer(0);
-            var expectedDeletionResult = ResponseTestHelper.GetFailedDeletionResult();
+            var expectedDeletionResult = ResponseTestHelper.GetFailedAccountDeletionResult();
             await dbContext.Customers.AddAsync(testCustomer);
             await dbContext.SaveChangesAsync();
 
