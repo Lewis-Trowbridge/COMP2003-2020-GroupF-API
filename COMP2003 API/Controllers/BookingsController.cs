@@ -101,7 +101,7 @@ namespace COMP2003_API.Controllers
 
             if (!booking.BookingTime.HasValue)
             {
-                booking.BookingTime = new DateTime(1753, 1, 1, 12, 0, 0);
+                booking.BookingTime = new DateTime(1753, 1, 1, 12, 0, 0); //This is the minimum dateTimethat can be passed through
             }
 
             int response = await CallEditBookingSP(booking.BookingId, booking.BookingTime.Value, booking.BookingSize, booking.VenueTableId);
