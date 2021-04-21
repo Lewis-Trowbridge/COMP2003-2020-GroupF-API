@@ -109,11 +109,11 @@ namespace COMP2003_API.Controllers
             {
                 case 200:
                     result.Success = true;
-                    result.Message = "Customer details edited.";
+                    result.Message = "Booking details edited.";
                     return Ok(result);
                 case 404:
                     result.Success = false;
-                    result.Message = "Customer not found.";
+                    result.Message = "Booking not found.";
                     return StatusCode(404, result);
                 case 400:
                     result.Success = false;

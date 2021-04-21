@@ -18,6 +18,115 @@ tags:
   
 paths:
 
+  /venues/view:
+    get:
+      tags:
+      - Venues
+      summary: Gets venue information
+      description: Returns all information on a given venue
+      parameters:
+      - in: query
+        name: venueId
+        required: true
+        schema:
+          type: integer
+        description: The ID of the desired venue
+      responses:
+        "200":
+          description: The full information of the venue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppVenueView"
+        "404":
+          description: Returned when no venue is found with the given ID
+      
+
+  /venues/top:
+    get:
+      tags:
+      - Venues
+      summary: Gets top venues
+      description: Returns a list of the 30 top venues, intended to be displayed on a home page
+      responses:
+        "200":
+          description: The top 30 venues.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MinifiedVenueResult"
+                  
+    
+
+  /venues/search/:
+    get:
+      tags:
+      - Venues
+      summary: Returns a compressed list of venues
+      description: Gets a compressed list of venues designed to be displayed on a search page - only necessary information for this purpose is given.
+      parameters:
+        - in: query
+          name: searchString
+          required: true
+          schema:
+            type: string
+          description: A venue name, city name, or postcode
+      responses:
+        "200":
+          description: A JSON array of venue information
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MinifiedVenueResult"
+                      
+                      
+  /venues/bookTable/:
+    post:
+      tags:
+      - Venues
+      summary: Creates a new booking
+      description: Creates a new booking based on the information given - it is important to note that it is the venue **table** ID that is passed.
+      requestBody:
+        description: The information required to create a new booking. **NOTE - AS AUTHENTICATION HAS NOT BEEN IMPLEMENTED AT THE TIME OF WRITING, THE CUSTOMER ID IS PASSED AS A PARAMETER - THIS** ***WILL*** **CHANGE**
+        required: True
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                venueTableId:
+                  type: integer
+                customerId:
+                  type: integer
+                bookingDateTime:
+                  type: string
+                  format: date-time
+                bookingSize:
+                  type: integer
+      responses:
+        "201":
+          description: The booking has been successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreationResult"
+        "400":
+          description: The booking could not be created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreationResult"
+        "500":
+          description: An unspecified server error has occurred.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreationResult"
+        
   /venues/tablesAvailable:
     get:
       tags:
@@ -63,99 +172,6 @@ paths:
                       type: integer
                     numberOfSeats:
                       type: integer
-      
-
-  /venues/top:
-    get:
-      tags:
-      - Venues
-      summary: Gets top venues
-      description: Returns a list of the 30 top venues, intended to be displayed on a home page
-      responses:
-        "200":
-          description: The top 30 venues.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/AppVenueView"
-    
-
-  /venues/search/:
-    get:
-      tags:
-      - Venues
-      summary: Returns a compressed list of venues
-      description: Gets a compressed list of venues designed to be displayed on a search page - only necessary information for this purpose is given.
-      parameters:
-        - in: query
-          name: searchString
-          required: true
-          schema:
-            type: string
-          description: A venue name, city name, or postcode
-      responses:
-        "200":
-          description: A JSON array of venue information
-          content: 
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    name:
-                      type: string
-                    city:
-                      type: string
-                    postcode:
-                      type: string
-  /venues/bookTable/:
-    post:
-      tags:
-      - Venues
-      summary: Creates a new booking
-      description: Creates a new booking based on the information given - it is important to note that it is the venue **table** ID that is passed.
-      requestBody:
-        description: The information required to create a new booking. **NOTE - AS AUTHENTICATION HAS NOT BEEN IMPLEMENTED AT THE TIME OF WRITING, THE CUSTOMER ID IS PASSED AS A PARAMETER - THIS** ***WILL*** **CHANGE**
-        required: True
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                venueTableId:
-                  type: integer
-                customerId:
-                  type: integer
-                bookingDateTime:
-                  type: string
-                  format: date-time
-                bookingSize:
-                  type: integer
-      responses:
-        "201":
-          description: The booking has been successfully created.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreationResult"
-        "400":
-          description: The booking could not be created.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreationResult"
-        "500":
-          description: An unspecified server error has occurred.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreationResult"
-        
               
   /bookings/view:
     get:
@@ -202,8 +218,62 @@ paths:
                     type: string
                   county:
                     type: string
+                  venueTableId:
+                    type: integer
+                  venueTableNum:
+                    type: integer
+                  venueTableCapacity:
+                    type: integer
         "204":
           description: Returned when an invalid or inaccessible booking ID is given
+  
+  /bookings/history:
+    get:
+      tags:
+      - Bookings
+      summary: Gets a customer's booking history
+      description: Gets a minified version all of the bookings that a customer has made in the past in descending order (most recent first)
+      parameters:
+        - in: query
+          name: customerId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A list of the bookings the customer has made in the past. Can be empty if the customer has no bookings in their history.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MinifiedBookingResult"
+        "404":
+          description: The customer account could not be found.
+          
+  /bookings/upcoming:
+    get:
+      tags:
+      - Bookings
+      summary: Gets a customer's upcoming bookings
+      description: Gets a minified version all of the bookings that a customer has upcoming in the future in ascending order (most recent first)
+      parameters:
+        - in: query
+          name: customerId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A list of the bookings the customer has upcoming in the future. Can be empty if the customer has no bookings in their history.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MinifiedBookingResult"
+        "404":
+          description: The customer account could not be found.
           
   /bookings/delete:
     delete:
@@ -238,6 +308,102 @@ paths:
               schema:
                 $ref: "#/components/schemas/DeletionResult"
           
+  /bookings/edit:
+    put:
+      tags:
+      - Bookings
+      summary: Edit an existing booking
+      description: Allows editing of an existing booking, based on the information given. Inputs can be empty except for the bookingId
+      requestBody:
+        description: The information of booking changed.
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bookingId:
+                  type: integer
+                bookingTime:
+                  type: string
+                  format: date-time
+                bookingSize: 
+                  type: integer
+                venueTableId:
+                  type: integer
+      responses:
+        "200":
+          description: A bookings details have been edited. Message given is "Booking details edited."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EditResult"
+                
+        "404":
+          description: A the entered ID could not be found. Message given "Booking not found."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EditResult"
+                
+        "400":
+          description: The attempted edit is at a time with a booking already on that table. Message given "Booking already at that time."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EditResult"
+                
+        "500":
+          description: Another error has occured. Message is "An Unspecified server error has occured."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EditResult"
+          
+  /customers/edit:
+    put:
+      tags:
+      - Customers
+      summary: Edit an existing customer account
+      description: Allows editing of an existing customer account based on information given, inputs can be empty except for customerId
+      requestBody:
+        description: The information of customer account changed.
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerId:
+                  type: integer
+                customerName:
+                  type: string
+                customerContactNumber:
+                  type: string
+                customerUsername:
+                  type: string
+                customerPassword:
+                  type: string
+      responses:
+        "200":
+          description: A user accounts details have been edited. Message given is "Customer details edited."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EditResult"
+        "404":
+          description: A the entered ID could not be found. Message given "Customer not found."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EditResult"
+        
+        "500":
+          description: Another error has occured. Message is "An Unspecified server error has occured."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EditResult"
           
   /customers/create:
     post:
@@ -281,6 +447,29 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreationResult"
                 
+  /customers/view:
+    get:
+      tags:
+      - Customers
+      summary: Gets a customer's information
+      description: Gets a customer's information, minus the password for obvious security reasons.
+      parameters:
+        - in: query
+          name: customerId
+          required: true
+          schema:
+            type: integer
+          
+      responses:
+        "200":
+          description: The customer's information, minus password.
+          content:  
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MinifiedCustomerResult"
+        "404":
+          description: The customer account could not be found.
+                
   /customers/delete:
     delete:
       tags:
@@ -319,6 +508,14 @@ paths:
           
 components:
   schemas:
+    EditResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+     
     CreationResult:
       type: object
       properties:
@@ -342,6 +539,8 @@ components:
       properties:
         venueId:
           type: integer
+        venueName:
+          type: string
         venuePostcode:
           type: string
         addLineOne:
@@ -354,4 +553,44 @@ components:
           type: string
         totalCapacity:
           type: integer
-         
+          
+    MinifiedCustomerResult:
+      type: object
+      properties:
+        customerId:
+          type: integer
+        customerName:
+          type: string
+        customerContactNumber:
+          type: string
+        customerUsername:
+          type: string
+      
+    MinifiedBookingResult:
+      type: object
+      properties:
+          bookingId:
+            type: integer
+          bookingDateTime:
+            type: string
+            format: date-time
+          bookingSize:
+            type: integer
+          venueName:
+            type: string
+          venuePostcode:
+            type: string
+          
+    MinifiedVenueResult:
+      type: object
+      properties:
+        venueId:
+          type: integer
+        venueName:
+          type: string
+        venueCity:
+          type: string
+        venuePostcode:
+          type: string
+          
+      

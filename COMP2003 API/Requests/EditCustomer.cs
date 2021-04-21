@@ -8,7 +8,7 @@ namespace COMP2003_API.Requests
 {
     public class EditCustomer
     {
-        [JsonProperty]
+        [JsonRequired]
         public int CustomerId { get; set; }
         [JsonProperty]
         public string CustomerName { get; set; }

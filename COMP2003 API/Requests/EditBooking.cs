@@ -8,7 +8,7 @@ namespace COMP2003_API.Requests
 {
     public class EditBooking
     {
-        [JsonProperty]
+        [JsonRequired]
         public int BookingId { get; set; }
         [JsonProperty]
         public DateTime? BookingTime { get; set; }
