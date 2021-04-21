@@ -140,9 +140,6 @@ namespace COMP2003_API.Controllers
 
             await _context.Database.ExecuteSqlRawAsync("EXEC edit_booking @booking_id, @booking_time, @booking_size, @venue_table_id, @status_code OUTPUT", parameters);
 
-            System.Diagnostics.Debug.WriteLine("--------------------------------^^" );
-            System.Diagnostics.Debug.WriteLine("--------------------------------^^" );
-            System.Diagnostics.Debug.WriteLine("--------------------------------^^" + parameters[4].Value.ToString());
             return Convert.ToInt32(parameters[4].Value);
         }
     }
