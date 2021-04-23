@@ -308,6 +308,102 @@ paths:
               schema:
                 $ref: "#/components/schemas/DeletionResult"
           
+  /bookings/edit:
+    put:
+      tags:
+      - Bookings
+      summary: Edit an existing booking
+      description: Allows editing of an existing booking, based on the information given. Inputs can be empty except for the bookingId
+      requestBody:
+        description: The information of booking changed.
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bookingId:
+                  type: integer
+                bookingTime:
+                  type: string
+                  format: date-time
+                bookingSize: 
+                  type: integer
+                venueTableId:
+                  type: integer
+      responses:
+        "200":
+          description: A bookings details have been edited. Message given is "Booking details edited."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EditResult"
+                
+        "404":
+          description: A the entered ID could not be found. Message given "Booking not found."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EditResult"
+                
+        "400":
+          description: The attempted edit is at a time with a booking already on that table. Message given "Booking already at that time."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EditResult"
+                
+        "500":
+          description: Another error has occured. Message is "An Unspecified server error has occured."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EditResult"
+          
+  /customers/edit:
+    put:
+      tags:
+      - Customers
+      summary: Edit an existing customer account
+      description: Allows editing of an existing customer account based on information given, inputs can be empty except for customerId
+      requestBody:
+        description: The information of customer account changed.
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerId:
+                  type: integer
+                customerName:
+                  type: string
+                customerContactNumber:
+                  type: string
+                customerUsername:
+                  type: string
+                customerPassword:
+                  type: string
+      responses:
+        "200":
+          description: A user accounts details have been edited. Message given is "Customer details edited."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EditResult"
+        "404":
+          description: A the entered ID could not be found. Message given "Customer not found."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EditResult"
+        
+        "500":
+          description: Another error has occured. Message is "An Unspecified server error has occured."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EditResult"
           
   /customers/create:
     post:
@@ -412,6 +508,14 @@ paths:
           
 components:
   schemas:
+    EditResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+     
     CreationResult:
       type: object
       properties:

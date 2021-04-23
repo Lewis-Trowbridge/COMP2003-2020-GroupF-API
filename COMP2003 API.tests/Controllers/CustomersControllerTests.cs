@@ -201,5 +201,107 @@ namespace COMP2003_API.Tests.Controllers
             await dbContext.SaveChangesAsync();
 
         }
+
+        [Fact]
+        public async void Edit_WithValidInputs_EditsSuccessfully()
+        {
+
+            // Arrange
+            var dbContext = COMP2003TestHelper.GetDbContext();
+            var controller = new CustomersController(dbContext);
+            var testCustomer = COMP2003TestHelper.GetTestCustomer(0);
+            var expectedEditResult = ResponseTestHelper.GetSuccessfulAcccountEditResult();
+            await dbContext.Customers.AddAsync(testCustomer);
+            await dbContext.SaveChangesAsync();
+
+            EditCustomer request = new EditCustomer();
+            request.CustomerId = testCustomer.CustomerId;
+            request.CustomerContactNumber = testCustomer.CustomerContactNumber + "edit";
+            request.CustomerName = testCustomer.CustomerName + "edit";
+            request.CustomerPassword = testCustomer.CustomerPassword;
+            request.CustomerUsername = testCustomer.CustomerUsername + "edit";            
+
+            // Act
+            var actionResult = await controller.Edit(request);
+            var okObjectResult = actionResult.Result as OkObjectResult;
+            var realEditResult = (EditResult)okObjectResult.Value;
+
+            // Assert
+            Assert.IsType<OkObjectResult>(actionResult.Result);
+            Assert.Equal(expectedEditResult.Message, realEditResult.Message);
+            Assert.Equal(expectedEditResult.Success, realEditResult.Success);
+
+            // Cleanup
+            dbContext.Customers.Remove(testCustomer);
+            await dbContext.SaveChangesAsync();
+        }
+
+        [Fact]
+        public async void Edit_WithValidNullInput_EditsSucessfully()
+        {
+            // Arrange
+            var dbContext = COMP2003TestHelper.GetDbContext();
+            var controller = new CustomersController(dbContext);
+            var testCustomer = COMP2003TestHelper.GetTestCustomer(0);
+            var expectedEditResult = ResponseTestHelper.GetSuccessfulAcccountEditResult();
+            await dbContext.Customers.AddAsync(testCustomer);
+            await dbContext.SaveChangesAsync();
+
+            EditCustomer request = new EditCustomer();
+            request.CustomerId = testCustomer.CustomerId;
+            request.CustomerContactNumber = "";
+            request.CustomerName = testCustomer.CustomerName + "editNull";
+            request.CustomerPassword = "";
+            request.CustomerUsername = "";
+
+            // Act
+            var actionResult = await controller.Edit(request);
+            var okObjectResult = actionResult.Result as OkObjectResult;
+            var realEditResult = (EditResult)okObjectResult.Value;
+
+            // Assert
+            Assert.IsType<OkObjectResult>(actionResult.Result);
+            Assert.Equal(expectedEditResult.Message, realEditResult.Message);
+            Assert.Equal(expectedEditResult.Success, realEditResult.Success);
+
+            // Cleanup
+            dbContext.Customers.Remove(testCustomer);
+            await dbContext.SaveChangesAsync();
+
+        }
+
+        [Fact]
+        public async void Edit_WithPassword_EditsSuccessfully()
+        {
+            // Arrange
+            var dbContext = COMP2003TestHelper.GetDbContext();
+            var controller = new CustomersController(dbContext);
+            var testCustomer = COMP2003TestHelper.GetTestCustomer(0);
+            var expectedEditResult = ResponseTestHelper.GetSuccessfulAcccountEditResult();
+            await dbContext.Customers.AddAsync(testCustomer);
+            await dbContext.SaveChangesAsync();
+
+            EditCustomer request = new EditCustomer();
+            request.CustomerId = testCustomer.CustomerId;
+            request.CustomerContactNumber = testCustomer.CustomerContactNumber + "edit";
+            request.CustomerName = testCustomer.CustomerName + "edit";
+            request.CustomerPassword = testCustomer.CustomerPassword + "edit";
+            request.CustomerUsername = testCustomer.CustomerUsername + "edit";
+
+            // Act
+            var actionResult = await controller.Edit(request);
+            var okObjectResult = actionResult.Result as OkObjectResult;
+            var realEditResult = (EditResult)okObjectResult.Value;
+
+            // Assert
+            Assert.IsType<OkObjectResult>(actionResult.Result);
+            Assert.Equal(expectedEditResult.Message, realEditResult.Message);
+            Assert.Equal(expectedEditResult.Success, realEditResult.Success);
+
+            // Cleanup
+            dbContext.Customers.Remove(testCustomer);
+            await dbContext.SaveChangesAsync();
+        }
+
     }
 }

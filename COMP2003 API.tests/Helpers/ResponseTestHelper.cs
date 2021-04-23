@@ -48,6 +48,26 @@ namespace COMP2003_API.Tests.Helpers
             return result;
         }
 
+        public static EditResult GetSuccessfulAcccountEditResult()
+        {
+            EditResult result = new EditResult
+            {
+                Success = true,
+                Message = "Customer details edited."
+
+        };
+            return result;
+        }
+        public static EditResult GetFailedAcccountEditResult()
+        {
+            EditResult result = new EditResult
+            {
+                Success = false,
+                Message = "Customer not found."
+            };
+            return result;
+        }
+
         public static MinifiedBookingResult GetMinifiedBookingResult(Bookings booking)
         {
             MinifiedBookingResult result = new MinifiedBookingResult
