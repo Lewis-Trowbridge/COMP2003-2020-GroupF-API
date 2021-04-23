@@ -593,4 +593,3 @@ components:
         venuePostcode:
           type: string
           
-      

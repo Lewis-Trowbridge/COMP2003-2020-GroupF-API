@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace COMP2003_API.Responses
 {
-    public class VenueTablesAvailableResult
+    public struct VenueTablesAvailableResult
     {
         public int TableId { get; set; }
         public int VenueTableNumber { get; set; }
