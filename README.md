@@ -1,4 +1,4 @@
-# COMP2003-2020-GroupF
+# COMP2003-2020-GroupF-API
 
 ## Other repositories in this project
 
