@@ -14,6 +14,7 @@ This repository contains the code for the API used by the mobile app to access t
 - [BCrypt.Net-Next](https://www.nuget.org/packages/BCrypt.Net-Next/)
 - [libphonenumber-csharp](https://www.nuget.org/packages/libphonenumber-csharp/)
 - [Xunit](https://github.com/xunit/xunit)
+- [Levenshtein implementation](https://stackoverflow.com/questions/9453731/how-to-calculate-distance-similarity-measure-of-given-2-strings)
 
 ## Team  
 
