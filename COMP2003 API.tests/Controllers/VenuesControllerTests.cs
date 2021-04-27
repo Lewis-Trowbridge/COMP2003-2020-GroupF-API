@@ -164,14 +164,20 @@ namespace COMP2003_API.Tests.Controllers
         {
             // Arrange
             COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
             VenuesController controller = new VenuesController(dbContext);
+            VenueTables testTable = await VenuesControllerTestHelper.InsertVenueTableSet(dbContext);
+            VenueTablesAvailableResult testResult = VenuesControllerTestHelper.GetVenueTablesAvailableResult(testTable);
 
             // Act
             DateTime enteredTime = DateTime.Parse("2701-12-25 15:10:00");
-            ActionResult<List<VenueTablesAvailableResult>> actionResult = await controller.TablesAvailable(1, 4, enteredTime);
+            ActionResult<List<VenueTablesAvailableResult>> actionResult = await controller.TablesAvailable(testTable.VenueId, testTable.VenueTableCapacity, enteredTime);
+            var okObjectResult = actionResult.Result as OkObjectResult;
+            var realResult = (List<VenueTablesAvailableResult>)okObjectResult.Value;
 
             // Assert
-            Assert.True(actionResult.Value.Count >= 1);
+            Assert.True(realResult.Count >= 1);
+            Assert.Contains(testResult, realResult);
         }
 
         [Fact]
@@ -179,14 +185,21 @@ namespace COMP2003_API.Tests.Controllers
         {
             // Arrange
             COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
             VenuesController controller = new VenuesController(dbContext);
+            VenueTables testTable = await VenuesControllerTestHelper.InsertVenueTableSet(dbContext);
+            VenueTablesAvailableResult testResult = VenuesControllerTestHelper.GetVenueTablesAvailableResult(testTable);
 
             // Act
             DateTime enteredTime = DateTime.Parse("2701-12-25 15:10:00");
-            ActionResult<List<VenueTablesAvailableResult>> actionResult = await controller.TablesAvailable(1, 77, enteredTime);
+            ActionResult<List<VenueTablesAvailableResult>> actionResult = await controller.TablesAvailable(testTable.VenueId, testTable.VenueTableCapacity + 1, enteredTime);
+            var okObjectResult = actionResult.Result as OkObjectResult;
+            var realResult = (List<VenueTablesAvailableResult>)okObjectResult.Value;
 
             // Assert
-            Assert.True(actionResult.Value.Count == 0);
+            Assert.True(realResult.Count == 0);
+            Assert.DoesNotContain(testResult, realResult);
+
         }
 
         [Fact]
@@ -194,14 +207,20 @@ namespace COMP2003_API.Tests.Controllers
         {
             // Arrange
             COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
             VenuesController controller = new VenuesController(dbContext);
+            VenueTables testTable = await VenuesControllerTestHelper.InsertVenueTableSet(dbContext);
+            VenueTablesAvailableResult testResult = VenuesControllerTestHelper.GetVenueTablesAvailableResult(testTable);
 
             // Act
             DateTime enteredTime = DateTime.Parse("2701-12-25 15:10:00");
             ActionResult<List<VenueTablesAvailableResult>> actionResult = await controller.TablesAvailable(9999, 4, enteredTime);
+            var okObjectResult = actionResult.Result as OkObjectResult;
+            var realResult = (List<VenueTablesAvailableResult>)okObjectResult.Value;
 
             // Assert
-            Assert.True(actionResult.Value.Count == 0);
+            Assert.True(realResult.Count == 0);
+            Assert.DoesNotContain(testResult, realResult);
         }
 
         [Fact]
