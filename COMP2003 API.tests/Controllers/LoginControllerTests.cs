@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using COMP2003_API.Controllers;
 using COMP2003_API.Models;
+using COMP2003_API.Requests;
 using COMP2003_API.Responses;
 using COMP2003_API.Tests.Helpers;
 using Xunit;
@@ -33,10 +34,15 @@ namespace COMP2003_API.Tests.Controllers
             await dbContext.AddAsync(testCustomer);
             await dbContext.SaveChangesAsync();
 
+            LoginRequest testRequest = new LoginRequest
+            {
+                CustomerUsername = testCustomer.CustomerUsername,
+                CustomerPassword = originalPassword
+            };
             LoginResult testResult = LoginControllerTestHelper.GetSuccessfulLoginResult(testCustomer);
 
             // Act
-            var actionResult = await controller.Login(testCustomer.CustomerUsername, originalPassword);
+            var actionResult = await controller.Login(testRequest);
             var okObjectResult = actionResult.Result as OkObjectResult;
             var realResult = (LoginResult)okObjectResult.Value;
 
@@ -58,10 +64,15 @@ namespace COMP2003_API.Tests.Controllers
             await dbContext.AddAsync(testCustomer);
             await dbContext.SaveChangesAsync();
 
+            LoginRequest testRequest = new LoginRequest
+            {
+                CustomerUsername = username,
+                CustomerPassword = password
+            };
             LoginResult testResult = LoginControllerTestHelper.GetFailedLoginResult();
 
             // Act
-            var actionResult = await controller.Login(username, password);
+            var actionResult = await controller.Login(testRequest);
             var unauthorisedResult = actionResult.Result as UnauthorizedObjectResult;
             var realResult = (LoginResult)unauthorisedResult.Value;
 

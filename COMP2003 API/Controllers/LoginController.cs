@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using COMP2003_API.Models;
+using COMP2003_API.Requests;
 using COMP2003_API.Responses;
 using BCrypt.Net;
 
@@ -23,17 +24,17 @@ namespace COMP2003_API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<LoginResult>> Login(string customerUsername, string customerPassword)
+        public async Task<ActionResult<LoginResult>> Login(LoginRequest request)
         {
             LoginResult result;
 
             try
             {
                 Customers storedCustomer = await _context.Customers
-                    .Where(customer => customer.CustomerUsername.Equals(customerUsername))
+                    .Where(customer => customer.CustomerUsername.Equals(request.CustomerUsername))
                     .SingleAsync();
 
-                if (BCrypt.Net.BCrypt.Verify(customerPassword, storedCustomer.CustomerPassword))
+                if (BCrypt.Net.BCrypt.Verify(request.CustomerPassword, storedCustomer.CustomerPassword))
                 {
                     result = new LoginResult
                     {
