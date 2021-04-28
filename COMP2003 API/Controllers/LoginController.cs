@@ -22,7 +22,7 @@ namespace COMP2003_API.Controllers
             _context = context;
         }
 
-        [HttpPost("login")]
+        [HttpPost]
         public async Task<ActionResult<LoginResult>> Login(string customerUsername, string customerPassword)
         {
             LoginResult result;
