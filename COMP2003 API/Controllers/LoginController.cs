@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using COMP2003_API.Models;
 using COMP2003_API.Responses;
+using BCrypt.Net;
 
 namespace COMP2003_API.Controllers
 {
@@ -21,7 +22,7 @@ namespace COMP2003_API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<LoginResult> Login(string customerUsername, string customerPassword)
+        public async Task<ActionResult<LoginResult>> Login(string customerUsername, string customerPassword)
         {
             throw new NotImplementedException();
         }
