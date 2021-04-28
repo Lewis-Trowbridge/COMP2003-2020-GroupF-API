@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,44 @@ namespace COMP2003_API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<LoginResult>> Login(string customerUsername, string customerPassword)
         {
-            throw new NotImplementedException();
+            LoginResult result;
+
+            try
+            {
+                Customers storedCustomer = await _context.Customers
+                    .Where(customer => customer.CustomerUsername.Equals(customerUsername))
+                    .SingleAsync();
+
+                if (BCrypt.Net.BCrypt.Verify(customerPassword, storedCustomer.CustomerPassword))
+                {
+                    result = new LoginResult
+                    {
+                        Success = true,
+                        Id = storedCustomer.CustomerId,
+                        Message = "Login successful."
+                    };
+                    return Ok(result);
+                }
+
+                else
+                {
+                    result = new LoginResult
+                    {
+                        Success = false,
+                        Message = "Login failed."
+                    };
+                    return Unauthorized(result);
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                result = new LoginResult
+                {
+                    Success = false,
+                    Message = "Login failed."
+                };
+                return Unauthorized(result);
+            }
         }
 
 
