@@ -17,5 +17,14 @@ namespace COMP2003_API.Tests.Helpers
                 Message = "Login successful."
             };
         }
+
+        public static LoginResult GetFailedLoginResult()
+        {
+            return new LoginResult
+            {
+                Success = false,
+                Message = "Login failed."
+            };
+        }
     }
 }
