@@ -43,5 +43,32 @@ namespace COMP2003_API.Tests.Controllers
             // Assert
             Assert.Equal(testResult, realResult);
         }
+
+        [Theory]
+        [InlineData("TestUser", "Wrong password")]
+        [InlineData("Wrong user", "TestPassword")]
+        [InlineData("Wrong user", "Wrong password")]
+        public async void Login_WithInvalidInputs_Fails(string username, string password)
+        {
+            // Arrange
+            using var transaction = await dbContext.Database.BeginTransactionAsync();
+            Customers testCustomer = COMP2003TestHelper.GetTestCustomer(0);
+            string originalPassword = testCustomer.CustomerPassword;
+            testCustomer.CustomerPassword = BCrypt.Net.BCrypt.HashPassword(originalPassword, workFactor: 12);
+            await dbContext.AddAsync(testCustomer);
+            await dbContext.SaveChangesAsync();
+
+            LoginResult testResult = LoginControllerTestHelper.GetFailedLoginResult();
+
+            // Act
+            var actionResult = await controller.Login(username, password);
+            var unauthorisedResult = actionResult.Result as UnauthorizedObjectResult;
+            var realResult = (LoginResult)unauthorisedResult.Value;
+
+            // Assert
+            Assert.IsType<UnauthorizedObjectResult>(actionResult.Result);
+            Assert.Equal(testResult, realResult);
+
+        }
     }
 }
