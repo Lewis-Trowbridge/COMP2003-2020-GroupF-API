@@ -204,5 +204,59 @@ namespace COMP2003_API.Controllers
 
             return Convert.ToInt32(parameters[4].Value);
         }
+
+
+
+        //api/bookings/bookTable?venueTableId=2&customerId=3&bookingTime=2008-08-03 15:10:00&bookingSize=1
+        //EXEC book_table @venue_table_id = 2, @customer_id = 3, @booking_time = '2001-12-25 18:10:00', @booking_size = 5
+        [HttpPost("bookTable")]
+        public async Task<ActionResult<CreationResult>> BookTable(CreateBooking createBooking)
+        {
+            int venueTableId = createBooking.VenueTableId;
+            // Replace with retrieval of customer ID from HttpContext when authentication is implemented
+            int customerId = createBooking.CustomerId;
+            DateTime bookingTime = createBooking.BookingDateTime;
+            int bookingSize = createBooking.BookingSize;
+
+            int[] sc;
+            sc =
+                await CallBookTableSP(venueTableId, customerId, bookingTime, bookingSize);
+
+            CreationResult result = new CreationResult();
+
+            result.Message = "Booking unsuccessful";
+            result.Success = false;
+            if (sc[1] == 201)
+            {
+                result.Success = true;
+                result.Id = sc[0];
+                result.Message = "Booking created";
+                return Ok(result);
+            }
+
+            return StatusCode(sc[1]);
+        }
+        private async Task<int[]> CallBookTableSP(int venueTableId, int customerId, DateTime bookingTime, int bookingSize)
+        {
+
+            SqlParameter[] parameters = new SqlParameter[6];
+            parameters[0] = new SqlParameter("@venue_table_id", venueTableId);
+            parameters[1] = new SqlParameter("@customer_id", customerId);
+            parameters[2] = new SqlParameter("@booking_time", bookingTime.ToString("yyyy-MM-dd HH:mm:ss"));
+            parameters[3] = new SqlParameter("@booking_size", bookingSize);
+            parameters[4] = new SqlParameter("@booking_id", 0);
+            parameters[5] = new SqlParameter("@status_code", 0);
+
+            parameters[4].Direction = System.Data.ParameterDirection.Output;
+            parameters[5].Direction = System.Data.ParameterDirection.Output;
+
+            await _context.Database.ExecuteSqlRawAsync("EXEC create_booking @venue_table_id, @customer_id, @booking_time, @booking_size, @booking_id OUTPUT, @status_code OUTPUT", parameters);
+
+            int[] output = new int[2];
+            output[0] = Convert.ToInt32(parameters[4].Value);
+            output[1] = Convert.ToInt32(parameters[5].Value);
+
+            return output;
+        }
     }
 }
