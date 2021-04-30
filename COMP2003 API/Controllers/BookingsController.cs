@@ -209,8 +209,8 @@ namespace COMP2003_API.Controllers
 
         //api/bookings/bookTable?venueTableId=2&customerId=3&bookingTime=2008-08-03 15:10:00&bookingSize=1
         //EXEC book_table @venue_table_id = 2, @customer_id = 3, @booking_time = '2001-12-25 18:10:00', @booking_size = 5
-        [HttpPost("bookTable")]
-        public async Task<ActionResult<CreationResult>> BookTable(CreateBooking createBooking)
+        [HttpPost("createBooking")]
+        public async Task<ActionResult<CreationResult>> createBooking(CreateBooking createBooking)
         {
             int venueTableId = createBooking.VenueTableId;
             // Replace with retrieval of customer ID from HttpContext when authentication is implemented
@@ -220,7 +220,7 @@ namespace COMP2003_API.Controllers
 
             int[] sc;
             sc =
-                await CallBookTableSP(venueTableId, customerId, bookingTime, bookingSize);
+                await CallCreateBookingSP(venueTableId, customerId, bookingTime, bookingSize);
 
             CreationResult result = new CreationResult();
 
@@ -236,7 +236,7 @@ namespace COMP2003_API.Controllers
 
             return StatusCode(sc[1]);
         }
-        private async Task<int[]> CallBookTableSP(int venueTableId, int customerId, DateTime bookingTime, int bookingSize)
+        private async Task<int[]> CallCreateBookingSP(int venueTableId, int customerId, DateTime bookingTime, int bookingSize)
         {
 
             SqlParameter[] parameters = new SqlParameter[6];
