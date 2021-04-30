@@ -9,12 +9,14 @@ servers:
     description: University API hosting
 
 tags:
-- name: "Venues"
-  description: "Venues of the system"
-- name: "Bookings"
-  description: "Bookings of the system"
-- name: "Customers" 
-  description: "Customer accounts in the system"
+- name: Venues
+  description: Venues of the system
+- name: Bookings
+  description: Bookings of the system
+- name: Customers 
+  description: Customer accounts in the system
+- name: Login
+  description: Login access to the system
   
 paths:
 
@@ -504,6 +506,42 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DeletionResult"
+                
+                
+  /login:
+    post:
+      tags:
+        - Login
+      summary: Logs in as a customer
+      description: Logs in as a customer - this retrieves a customer ID when given a correct username and password.
+      requestBody:
+        description: The information to be logged in with.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerUsername:
+                  type: string
+                customerPassword:
+                  type: string
+        
+      responses:
+        "200":
+          description: A valid username and password have been given. Message is "Login successful."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResult"
+        "401":
+          description: A combination of invalid username and/or password has been given. Message is "Login failed."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResult"
+        
+                
         
           
 components:
@@ -531,6 +569,16 @@ components:
       properties:
         success:
           type: boolean
+        message:
+          type: string
+          
+    LoginResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        id:
+          type: integer
         message:
           type: string
     
