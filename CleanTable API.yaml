@@ -361,6 +361,49 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/EditResult"
+
+  /bookings/bookTable/:
+      post:
+        tags:
+        - Bookings
+        summary: Creates a new booking
+        description: Creates a new booking based on the information given - it is important to note that it is the venue **table** ID that is passed.
+        requestBody:
+          description: The information required to create a new booking. **NOTE - AS AUTHENTICATION HAS NOT BEEN IMPLEMENTED AT THE TIME OF WRITING, THE CUSTOMER ID IS PASSED AS A PARAMETER - THIS** ***WILL*** **CHANGE**
+          required: True
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  venueTableId:
+                    type: integer
+                  customerId:
+                    type: integer
+                  bookingDateTime:
+                    type: string
+                    format: date-time
+                  bookingSize:
+                    type: integer
+        responses:
+          "201":
+            description: The booking has been successfully created.
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CreationResult"
+          "400":
+            description: The booking could not be created.
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CreationResult"
+          "500":
+            description: An unspecified server error has occurred.
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CreationResult"
           
   /customers/edit:
     put:
