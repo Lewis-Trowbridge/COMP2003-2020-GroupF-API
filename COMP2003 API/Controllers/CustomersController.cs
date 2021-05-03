@@ -222,10 +222,10 @@ namespace COMP2003_API.Controllers
         {
             SqlParameter[] parameters = new SqlParameter[6];
             parameters[0] = new SqlParameter("@customer_id", customerId);
-            parameters[1] = new SqlParameter("@customer_name", customerName);
-            parameters[2] = new SqlParameter("@customer_contact_number", customerContactNumber);
-            parameters[3] = new SqlParameter("@customer_username", customerUsername);
-            parameters[4] = new SqlParameter("@customer_password", hashedPassword);
+            parameters[1] = EmptyIfNull("@customer_name", customerName);
+            parameters[2] = EmptyIfNull("@customer_contact_number", customerContactNumber);
+            parameters[3] = EmptyIfNull("@customer_username", customerUsername);
+            parameters[4] = EmptyIfNull("@customer_password", hashedPassword);
             parameters[5] = new SqlParameter("@response_message", 0);
 
             parameters[5].Direction = System.Data.ParameterDirection.Output;
@@ -233,6 +233,18 @@ namespace COMP2003_API.Controllers
             await _context.Database.ExecuteSqlRawAsync("EXEC edit_customer @customer_id, @customer_name, @customer_contact_number, @customer_username, @customer_password, @response_message OUTPUT", parameters);
 
             return Convert.ToInt32(parameters[5].Value);
+        }
+
+        private SqlParameter EmptyIfNull(string parameterName, string stringToCheck)
+        {
+            if (stringToCheck == null)
+            {
+                return new SqlParameter(parameterName, "");
+            }
+            else
+            {
+                return new SqlParameter(parameterName, stringToCheck);
+            }
         }
 
     }
