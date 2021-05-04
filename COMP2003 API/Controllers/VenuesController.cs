@@ -34,13 +34,13 @@ namespace COMP2003_API.Controllers
             List<VenueTables> allPossibleTables = new List<VenueTables>();
             List<Bookings> allCurrentBookings = new List<Bookings>();
 
-            allPossibleTables = _context.VenueTables.AsEnumerable().Where(
+            allPossibleTables = await _context.VenueTables.Where(
             venueTable => (venueTable.VenueId == venueId && partySize <= venueTable.VenueTableCapacity)
-            ).ToList();
+            ).ToListAsync();
 
-            allCurrentBookings = _context.Bookings.AsEnumerable().Where(
+            allCurrentBookings = await _context.Bookings.Where(
             bookingTables => bookingTables.VenueId == venueId
-            ).ToList();
+            ).ToListAsync();
 
             foreach (VenueTables venueTableView in allPossibleTables)
             {
