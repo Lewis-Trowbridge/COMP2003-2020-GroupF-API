@@ -77,7 +77,7 @@ namespace COMP2003_API.Controllers
         //api/venues/bookTable?venueTableId=2&customerId=3&bookingTime=2008-08-03 15:10:00&bookingSize=1
         //EXEC book_table @venue_table_id = 2, @customer_id = 3, @booking_time = '2001-12-25 18:10:00', @booking_size = 5
         [HttpPost("bookTable")]
-        public async Task<ActionResult<CreationResult>> BookTable(CreateBooking createBooking)
+        public async Task<ActionResult<CreationResult>> BookTable(CreateBookingRequest createBooking)
         {
             int venueTableId = createBooking.VenueTableId;
             // Replace with retrieval of customer ID from HttpContext when authentication is implemented

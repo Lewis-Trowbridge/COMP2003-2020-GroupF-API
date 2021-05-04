@@ -26,7 +26,7 @@ namespace COMP2003_API.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<CreationResult>> Create(CreateCustomer customer)
+        public async Task<ActionResult<CreationResult>> Create(CreateCustomerRequest customer)
         {
 
             CreationResult result = new CreationResult();
@@ -183,7 +183,7 @@ namespace COMP2003_API.Controllers
 
 
         [HttpPut("edit")]
-        public async Task<ActionResult<EditResult>> Edit(EditCustomer customer)
+        public async Task<ActionResult<EditResult>> Edit(EditCustomerRequest customer)
         {
             EditResult result = new EditResult();
             if (!ModelState.IsValid)
