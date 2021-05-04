@@ -147,7 +147,7 @@ namespace COMP2003_API.Controllers
         }
 
         [HttpPut("edit")]
-        public async Task<ActionResult<DeletionResult>> Edit(EditBooking booking)
+        public async Task<ActionResult<DeletionResult>> Edit(EditBookingRequest booking)
         {
             EditResult result = new EditResult();
             if (!ModelState.IsValid)

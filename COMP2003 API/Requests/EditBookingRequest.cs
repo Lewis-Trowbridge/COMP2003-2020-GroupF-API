@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace COMP2003_API.Requests
 {
-    public class EditBooking
+    public class EditBookingRequest
     {
         [JsonRequired]
         public int BookingId { get; set; }
