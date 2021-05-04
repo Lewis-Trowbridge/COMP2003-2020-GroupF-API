@@ -54,14 +54,21 @@ namespace COMP2003_API.Controllers
             bool customerExists = await _context.Customers.AnyAsync(customer => customer.CustomerId.Equals(customerId));
             if (customerExists)
             {
-                var bookings = _context.AppBookingsView
+                var bookings = await _context.AppBookingsView
                     .Where(booking => booking.CustomerId.Equals(customerId))
                     .Where(booking => booking.BookingTime < DateTime.Now)
-                    .OrderByDescending(booking => booking.BookingTime);
+                    .Select(booking => new MinifiedBookingResult
+                    {
+                        BookingId = booking.BookingId,
+                        BookingDateTime = booking.BookingTime,
+                        BookingSize = booking.BookingSize,
+                        VenueName = booking.VenueName,
+                        VenuePostcode = booking.VenuePostcode
+                    })
+                    .OrderByDescending(booking => booking.BookingDateTime)
+                    .ToListAsync();
 
-                List<MinifiedBookingResult> resultList = MinifyBookingViews(bookings);
-
-                return Ok(resultList);
+                return Ok(bookings);
             }
 
             else
@@ -76,38 +83,27 @@ namespace COMP2003_API.Controllers
             bool customerExists = await _context.Customers.AnyAsync(customer => customer.CustomerId.Equals(customerId));
             if (customerExists)
             {
-                var bookings = _context.AppBookingsView
+                var bookings = await _context.AppBookingsView
                     .Where(booking => booking.CustomerId.Equals(customerId))
                     .Where(booking => booking.BookingTime > DateTime.Now)
-                    .OrderBy(booking => booking.BookingTime);
-                List<MinifiedBookingResult> resultList = MinifyBookingViews(bookings);
-
-                return Ok(resultList);
+                    .Select(booking => new MinifiedBookingResult
+                    {
+                        BookingId = booking.BookingId,
+                        BookingDateTime = booking.BookingTime,
+                        BookingSize = booking.BookingSize,
+                        VenueName = booking.VenueName,
+                        VenuePostcode = booking.VenuePostcode
+                    })
+                    .OrderBy(booking => booking.BookingDateTime)
+                    .ToListAsync();
+                
+                return Ok(bookings);
             }
 
             else
             {
                 return NotFound();
             }
-        }
-
-        private List<MinifiedBookingResult> MinifyBookingViews(IOrderedQueryable<AppBookingsView> bookingViews)
-        {
-            List<MinifiedBookingResult> minifiedList = new List<MinifiedBookingResult>();
-            foreach (var bookingView in bookingViews)
-            {
-                MinifiedBookingResult minifiedBooking = new MinifiedBookingResult
-                {
-                    BookingId = bookingView.BookingId,
-                    BookingDateTime = bookingView.BookingTime,
-                    BookingSize = bookingView.BookingSize,
-                    VenueName = bookingView.VenueName,
-                    VenuePostcode = bookingView.VenuePostcode
-                };
-                minifiedList.Add(minifiedBooking);
-            }
-
-            return minifiedList;
         }
 
         [HttpDelete("delete")]
