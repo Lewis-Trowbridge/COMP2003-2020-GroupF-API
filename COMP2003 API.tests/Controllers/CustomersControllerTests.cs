@@ -20,7 +20,7 @@ namespace COMP2003_API.Tests.Controllers
             using var transaction = await dbContext.Database.BeginTransactionAsync();
             CustomersController controller = new CustomersController(dbContext);
             CreationResult expectedResult = CustomersControllerTestHelper.GetSuccessfulCreationResult();
-            CreateCustomer creationRequest = CustomersControllerTestHelper.GetTestCreateCustomer();
+            CreateCustomerRequest creationRequest = CustomersControllerTestHelper.GetTestCreateCustomer();
 
             // Act
             ActionResult<CreationResult> actionResult = await controller.Create(creationRequest);
@@ -52,7 +52,7 @@ namespace COMP2003_API.Tests.Controllers
             COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
             CustomersController controller = new CustomersController(dbContext);
             CreationResult expectedResult = CustomersControllerTestHelper.GetAlreadyCreatedResult();
-            CreateCustomer creationRequest = CustomersControllerTestHelper.GetTestCreateCustomer();
+            CreateCustomerRequest creationRequest = CustomersControllerTestHelper.GetTestCreateCustomer();
             Customers createdCustomer = COMP2003TestHelper.GetTestCustomer(0);
 
             // Insert customer in order to trigger already existing error
@@ -80,7 +80,7 @@ namespace COMP2003_API.Tests.Controllers
             CustomersController controller = new CustomersController(dbContext);
             controller.ModelState.AddModelError("error", "Invalid Model parameters");
 
-            ActionResult<CreationResult> result = await controller.Create(new CreateCustomer());
+            ActionResult<CreationResult> result = await controller.Create(new CreateCustomerRequest());
 
             Assert.IsType<BadRequestObjectResult>(result.Result);
 
@@ -95,7 +95,7 @@ namespace COMP2003_API.Tests.Controllers
             COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
             CustomersController controller = new CustomersController(dbContext);
             CreationResult expectedResult = CustomersControllerTestHelper.GetInvalidContactNumberResult();
-            CreateCustomer creationRequest = CustomersControllerTestHelper.GetTestCreateCustomer();
+            CreateCustomerRequest creationRequest = CustomersControllerTestHelper.GetTestCreateCustomer();
             creationRequest.CustomerContactNumber = phoneNumber;
 
             // Act
@@ -214,7 +214,7 @@ namespace COMP2003_API.Tests.Controllers
             await dbContext.Customers.AddAsync(testCustomer);
             await dbContext.SaveChangesAsync();
 
-            EditCustomer request = new EditCustomer();
+            EditCustomerRequest request = new EditCustomerRequest();
             request.CustomerId = testCustomer.CustomerId;
             request.CustomerContactNumber = testCustomer.CustomerContactNumber + "edit";
             request.CustomerName = testCustomer.CustomerName + "edit";
@@ -247,7 +247,7 @@ namespace COMP2003_API.Tests.Controllers
             await dbContext.Customers.AddAsync(testCustomer);
             await dbContext.SaveChangesAsync();
 
-            EditCustomer request = new EditCustomer();
+            EditCustomerRequest request = new EditCustomerRequest();
             request.CustomerId = testCustomer.CustomerId;
             request.CustomerContactNumber = "";
             request.CustomerName = testCustomer.CustomerName + "editNull";
@@ -281,7 +281,7 @@ namespace COMP2003_API.Tests.Controllers
             await dbContext.Customers.AddAsync(testCustomer);
             await dbContext.SaveChangesAsync();
 
-            EditCustomer request = new EditCustomer();
+            EditCustomerRequest request = new EditCustomerRequest();
             request.CustomerId = testCustomer.CustomerId;
             request.CustomerContactNumber = testCustomer.CustomerContactNumber + "edit";
             request.CustomerName = testCustomer.CustomerName + "edit";
