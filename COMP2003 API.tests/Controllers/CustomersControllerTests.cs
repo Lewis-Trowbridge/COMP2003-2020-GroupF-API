@@ -12,13 +12,20 @@ namespace COMP2003_API.Tests.Controllers
     public class CustomersControllerTests
     {
 
+        private COMP2003_FContext dbContext;
+        private CustomersController controller;
+
+        public CustomersControllerTests()
+        {
+            dbContext = COMP2003TestHelper.GetDbContext();
+            controller = new CustomersController(dbContext);
+        }
+
         [Fact]
         public async void Create_WithValidInputs_AddsSuccessfully()
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
             using var transaction = await dbContext.Database.BeginTransactionAsync();
-            CustomersController controller = new CustomersController(dbContext);
             CreationResult expectedResult = CustomersControllerTestHelper.GetSuccessfulCreationResult();
             CreateCustomerRequest creationRequest = CustomersControllerTestHelper.GetTestCreateCustomer();
 
@@ -49,8 +56,6 @@ namespace COMP2003_API.Tests.Controllers
         public async void Create_ExistingUser_Fails()
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
-            CustomersController controller = new CustomersController(dbContext);
             CreationResult expectedResult = CustomersControllerTestHelper.GetAlreadyCreatedResult();
             CreateCustomerRequest creationRequest = CustomersControllerTestHelper.GetTestCreateCustomer();
             Customers createdCustomer = COMP2003TestHelper.GetTestCustomer(0);
@@ -76,8 +81,6 @@ namespace COMP2003_API.Tests.Controllers
         [Fact]
         public async void Create_WithMissingInputs_Fails()
         {
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
-            CustomersController controller = new CustomersController(dbContext);
             controller.ModelState.AddModelError("error", "Invalid Model parameters");
 
             ActionResult<CreationResult> result = await controller.Create(new CreateCustomerRequest());
@@ -92,8 +95,6 @@ namespace COMP2003_API.Tests.Controllers
         public async void Create_WithInvalidPhoneNumber_Fails(string phoneNumber)
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
-            CustomersController controller = new CustomersController(dbContext);
             CreationResult expectedResult = CustomersControllerTestHelper.GetInvalidContactNumberResult();
             CreateCustomerRequest creationRequest = CustomersControllerTestHelper.GetTestCreateCustomer();
             creationRequest.CustomerContactNumber = phoneNumber;
@@ -112,9 +113,7 @@ namespace COMP2003_API.Tests.Controllers
         public async void View_ValidUser_ReturnsUserInformation()
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
             using var transaction = await dbContext.Database.BeginTransactionAsync();
-            CustomersController controller = new CustomersController(dbContext);
             Customers testCustomer = COMP2003TestHelper.GetTestCustomer(0);
 
             await dbContext.AddAsync(testCustomer);
@@ -135,9 +134,7 @@ namespace COMP2003_API.Tests.Controllers
         public async void View_NonexistentUser_Fails()
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
             using var transaction = await dbContext.Database.BeginTransactionAsync();
-            CustomersController controller = new CustomersController(dbContext);
             Customers testCustomer = COMP2003TestHelper.GetTestCustomer(0);
 
             await dbContext.AddAsync(testCustomer);
@@ -154,8 +151,6 @@ namespace COMP2003_API.Tests.Controllers
         public async void Delete_ExistingUser_DeletesSuccessfully()
         {
             // Arrange
-            var dbContext = COMP2003TestHelper.GetDbContext();
-            var controller = new CustomersController(dbContext);
             using var transaction = await dbContext.Database.BeginTransactionAsync();
             var testCustomer = COMP2003TestHelper.GetTestCustomer(0);
             var expectedDeletionResult = ResponseTestHelper.GetSuccessfulAcccountDeletionResult();
@@ -179,8 +174,6 @@ namespace COMP2003_API.Tests.Controllers
         public async void Delete_NonexistentUser_Fails()
         {
             // Arrange
-            var dbContext = COMP2003TestHelper.GetDbContext();
-            var controller = new CustomersController(dbContext);
             var testCustomer = COMP2003TestHelper.GetTestCustomer(0);
             var expectedDeletionResult = ResponseTestHelper.GetFailedAccountDeletionResult();
             await dbContext.Customers.AddAsync(testCustomer);
@@ -207,8 +200,6 @@ namespace COMP2003_API.Tests.Controllers
         {
 
             // Arrange
-            var dbContext = COMP2003TestHelper.GetDbContext();
-            var controller = new CustomersController(dbContext);
             var testCustomer = COMP2003TestHelper.GetTestCustomer(0);
             var expectedEditResult = ResponseTestHelper.GetSuccessfulAcccountEditResult();
             await dbContext.Customers.AddAsync(testCustomer);
@@ -240,8 +231,6 @@ namespace COMP2003_API.Tests.Controllers
         public async void Edit_WithValidNullInput_EditsSucessfully()
         {
             // Arrange
-            var dbContext = COMP2003TestHelper.GetDbContext();
-            var controller = new CustomersController(dbContext);
             var testCustomer = COMP2003TestHelper.GetTestCustomer(0);
             var expectedEditResult = ResponseTestHelper.GetSuccessfulAcccountEditResult();
             await dbContext.Customers.AddAsync(testCustomer);
@@ -274,8 +263,6 @@ namespace COMP2003_API.Tests.Controllers
         public async void Edit_WithPassword_EditsSuccessfully()
         {
             // Arrange
-            var dbContext = COMP2003TestHelper.GetDbContext();
-            var controller = new CustomersController(dbContext);
             var testCustomer = COMP2003TestHelper.GetTestCustomer(0);
             var expectedEditResult = ResponseTestHelper.GetSuccessfulAcccountEditResult();
             await dbContext.Customers.AddAsync(testCustomer);
