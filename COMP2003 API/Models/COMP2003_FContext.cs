@@ -192,13 +192,12 @@ namespace COMP2003_API.Models
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.VenueId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__bookings__venue___32E0915F");
+                    .HasConstraintName("FK__bookings__venue___42E1EEFE");
 
                 entity.HasOne(d => d.VenueTable)
                     .WithMany(p => p.Bookings)
                     .HasForeignKey(d => d.VenueTableId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__bookings__venue___33D4B598");
+                    .HasConstraintName("FK__bookings__venue___41EDCAC5");
             });
 
             modelBuilder.Entity<Customers>(entity =>
@@ -257,8 +256,7 @@ namespace COMP2003_API.Models
                 entity.HasOne(d => d.Venue)
                     .WithMany(p => p.VenueTables)
                     .HasForeignKey(d => d.VenueId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__venue_tab__venue__300424B4");
+                    .HasConstraintName("FK__venue_tab__venue__37703C52");
             });
 
             modelBuilder.Entity<Venues>(entity =>
