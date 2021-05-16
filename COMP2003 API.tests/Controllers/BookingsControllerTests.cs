@@ -12,12 +12,20 @@ namespace COMP2003_API.Tests.Controllers
 {
     public class BookingsControllerTests
     {
+
+        private COMP2003_FContext dbContext;
+        private BookingsController controller;
+
+        public BookingsControllerTests()
+        {
+            dbContext = COMP2003TestHelper.GetDbContext();
+            controller = new BookingsController(dbContext);
+        }
+
         [Fact]
         public async void ViewHistory_WithValidCustomerID_ReturnsOrderedInformation()
         {
-            // Arrange
-            var dbContext = COMP2003TestHelper.GetDbContext();
-            var controller = new BookingsController(dbContext);
+            // Arrange 
             using var transaction = await dbContext.Database.BeginTransactionAsync();
 
             Bookings testBooking = COMP2003TestHelper.GetTestBookings(0);
@@ -67,8 +75,6 @@ namespace COMP2003_API.Tests.Controllers
         [Fact]
         public async void ViewHistory_WithInvalidCustomerID_Fails()
         {
-            var dbContext = COMP2003TestHelper.GetDbContext();
-            var controller = new BookingsController(dbContext);
             using var transaction = await dbContext.Database.BeginTransactionAsync();
             var expectedDeletionResult = ResponseTestHelper.GetSuccessfulBookingDeletionResult();
 
@@ -85,8 +91,6 @@ namespace COMP2003_API.Tests.Controllers
         public async void ViewUpcoming_WithValidCustomerID_ReturnsOrderedInformation()
         {
             // Arrange
-            var dbContext = COMP2003TestHelper.GetDbContext();
-            var controller = new BookingsController(dbContext);
             using var transaction = await dbContext.Database.BeginTransactionAsync();
 
             Bookings testBooking = COMP2003TestHelper.GetTestBookings(0);
@@ -137,17 +141,18 @@ namespace COMP2003_API.Tests.Controllers
         [Fact]
         public async void ViewUpcoming_WithInvalidCustomerID_Fails()
         {
-            var dbContext = COMP2003TestHelper.GetDbContext();
-            var controller = new BookingsController(dbContext);
+            // Arrange
             using var transaction = await dbContext.Database.BeginTransactionAsync();
             var expectedDeletionResult = ResponseTestHelper.GetSuccessfulBookingDeletionResult();
 
+            // Act
             Bookings testBooking = COMP2003TestHelper.GetTestBookings(0);
             BookingAttendees testAttendee = COMP2003TestHelper.GetTestBookingAttendee(testBooking);
             await BookingsControllerTestHelper.InsertBookingSet(dbContext, testBooking, testAttendee);
 
             var actionResult = await controller.ViewUpcoming(testAttendee.CustomerId + 1);
 
+            // Assert
             Assert.IsType<NotFoundResult>(actionResult.Result);
         }
 
@@ -155,8 +160,6 @@ namespace COMP2003_API.Tests.Controllers
         public async void Delete_ExistingBooking_DeletesSuccessfully()
         {
             // Arrange
-            var dbContext = COMP2003TestHelper.GetDbContext();
-            var controller = new BookingsController(dbContext);
             using var transaction = await dbContext.Database.BeginTransactionAsync();
             var expectedDeletionResult = ResponseTestHelper.GetSuccessfulBookingDeletionResult();
 
@@ -180,8 +183,6 @@ namespace COMP2003_API.Tests.Controllers
         public async void Delete_NonexistentBooking_Fails()
         {
             // Arrange
-            var dbContext = COMP2003TestHelper.GetDbContext();
-            var controller = new BookingsController(dbContext);
             var expectedDeletionResult = ResponseTestHelper.GetFailedBookingDeletionResult();
 
             Bookings testBooking = COMP2003TestHelper.GetTestBookings(0);

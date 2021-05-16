@@ -12,13 +12,19 @@ namespace COMP2003_API.Tests.Controllers
 {
     public class VenuesControllerTests
     {
+        private COMP2003_FContext dbContext;
+        private VenuesController controller;
+
+        public VenuesControllerTests()
+        {
+            dbContext = COMP2003TestHelper.GetDbContext();
+            controller = new VenuesController(dbContext);
+        }
 
         [Fact]
         public async void View_ValidVenue_ReturnsVenueInformation()
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
-            VenuesController controller = new VenuesController(dbContext);
             using var transaction = await dbContext.Database.BeginTransactionAsync();
             Venues testVenue = COMP2003TestHelper.GetTestVenue(0);
 
@@ -45,8 +51,6 @@ namespace COMP2003_API.Tests.Controllers
         public async void View_NonexistentVenue_Fails()
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
-            VenuesController controller = new VenuesController(dbContext);
             using var transaction = await dbContext.Database.BeginTransactionAsync();
             Venues testVenue = COMP2003TestHelper.GetTestVenue(0);
 
@@ -64,8 +68,6 @@ namespace COMP2003_API.Tests.Controllers
         public async void ViewTop_Returns_ListOfMinifiedVenueResults()
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
-            VenuesController controller = new VenuesController(dbContext);
 
             // Act
             ActionResult<List<MinifiedVenueResult>> actionResult = await controller.ViewTop();
@@ -81,9 +83,7 @@ namespace COMP2003_API.Tests.Controllers
         public async void ViewTop_ReturnsOnlyTopVenues()
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
             using var transaction = await dbContext.Database.BeginTransactionAsync();
-            VenuesController controller = new VenuesController(dbContext);
            
 
             // Add 31 venues to ensure that there are more than 30 venues in the database
@@ -113,9 +113,7 @@ namespace COMP2003_API.Tests.Controllers
         public async void Search_ForExistingVenue_ReturnsMatchingVenues(string searchString)
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
             using var transaction = await dbContext.Database.BeginTransactionAsync();
-            VenuesController controller = new VenuesController(dbContext);
 
             Venues testVenue = COMP2003TestHelper.GetTestVenue(0);
             await dbContext.AddAsync(testVenue);
@@ -139,9 +137,7 @@ namespace COMP2003_API.Tests.Controllers
         public async void Search_ForNonexistentVenue_ReturnsEmptyList(string searchString)
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
             using var transaction = await dbContext.Database.BeginTransactionAsync();
-            VenuesController controller = new VenuesController(dbContext);
 
             Venues testVenue = COMP2003TestHelper.GetTestVenue(0);
             await dbContext.AddAsync(testVenue);
@@ -163,9 +159,7 @@ namespace COMP2003_API.Tests.Controllers
         public async void TablesAvailable_CorrectPartySizeAndTime()
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
             using var transaction = await dbContext.Database.BeginTransactionAsync();
-            VenuesController controller = new VenuesController(dbContext);
             VenueTables testTable = await VenuesControllerTestHelper.InsertVenueTableSet(dbContext);
             VenueTablesAvailableResult testResult = VenuesControllerTestHelper.GetVenueTablesAvailableResult(testTable);
 
@@ -184,9 +178,7 @@ namespace COMP2003_API.Tests.Controllers
         public async void TablesAvailable_IncorrectPartySizeAndTime()
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
             using var transaction = await dbContext.Database.BeginTransactionAsync();
-            VenuesController controller = new VenuesController(dbContext);
             VenueTables testTable = await VenuesControllerTestHelper.InsertVenueTableSet(dbContext);
             VenueTablesAvailableResult testResult = VenuesControllerTestHelper.GetVenueTablesAvailableResult(testTable);
 
@@ -206,9 +198,7 @@ namespace COMP2003_API.Tests.Controllers
         public async void TablesAvailable_IncorrectVenueId()
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
             using var transaction = await dbContext.Database.BeginTransactionAsync();
-            VenuesController controller = new VenuesController(dbContext);
             VenueTables testTable = await VenuesControllerTestHelper.InsertVenueTableSet(dbContext);
             VenueTablesAvailableResult testResult = VenuesControllerTestHelper.GetVenueTablesAvailableResult(testTable);
 
@@ -227,8 +217,6 @@ namespace COMP2003_API.Tests.Controllers
         public async void TablesAvailable_ReturnsType()
         {
             // Arrange
-            COMP2003_FContext dbContext = COMP2003TestHelper.GetDbContext();
-            VenuesController controller = new VenuesController(dbContext);            
 
             // Act
             DateTime enteredTime = DateTime.Parse("2001-12-25 18:10:00");

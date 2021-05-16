@@ -40,9 +40,9 @@ namespace COMP2003_API.Tests.Helpers
             return result;
         }
 
-        public static CreateCustomer GetTestCreateCustomer()
+        public static CreateCustomerRequest GetTestCreateCustomer()
         {
-            CreateCustomer customer = new CreateCustomer
+            CreateCustomerRequest customer = new CreateCustomerRequest
             {
                 CustomerName = "Test User",
                 CustomerContactNumber = "+441984454191",
